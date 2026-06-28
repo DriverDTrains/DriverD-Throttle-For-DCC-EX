@@ -12,7 +12,7 @@ This contains everything you need to run your app locally.
 
 **Prerequisites:**  Node.js
 
-[NOTE: 06-70-2026 THESE HAVE NOT BEEN UPDATED AND ARE OUT OF DATE]
+[NOTE: 06-27-2026 THESE HAVE NOT BEEN UPDATED AND ARE OUT OF DATE]
 
 Automated install:
 1. Run the DriverD Node Manager in either the MacOS or WindowsOS folder included in the download. See the readme.txt file in that folder for more details on installing the DriverD Node Manager app.
