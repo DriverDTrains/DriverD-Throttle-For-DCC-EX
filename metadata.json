@@ -1,0 +1,9 @@
+{
+  "name": "Remix Manual GM.2: @DriverD Throttle for DCC-EX",
+  "description": "A digital throttle for model railroads using the DCC-EX native protocol, by @DriverDTrains. Supports Web Serial in browsers and as a standalone Electron desktop application.",
+  "requestFramePermissions": [
+    "serial",
+    "usb"
+  ],
+  "majorCapabilities": []
+}

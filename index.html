@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@DriverD Throttle for DCC-EX</title>
+    <link rel="manifest" href="/manifest.webmanifest" />
+    <meta name="theme-color" content="#2563eb" />
+    <link rel="apple-touch-icon" href="/throttleiconbydriverd.png" />
+  </head>
+  <body>
+    <div id="root"></div>
+    <script>
+      // Prevent buttons and other interactive controls (excluding text inputs/textareas) from gaining focus on click
+      document.addEventListener('mousedown', function(e) {
+        var target = e.target.closest('button, [role="button"], input[type="button"], input[type="submit"], a');
+        if (target) {
+          e.preventDefault();
+        }
+      });
+      // Completely disable Tab key navigation
+      document.addEventListener('keydown', function(e) {
+        if (e.key === 'Tab') {
+          e.preventDefault();
+        }
+      });
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>
+

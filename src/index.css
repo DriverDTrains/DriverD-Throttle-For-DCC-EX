@@ -1,0 +1,375 @@
+@import "tailwindcss";
+
+body {
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, [contenteditable="true"] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* react-colorful customization */
+.custom-color-picker .react-colorful {
+  width: 100% !important;
+  height: 180px !important;
+  border-radius: 12px;
+  border: none;
+}
+.custom-color-picker .react-colorful__saturation {
+  border-radius: 12px 12px 0 0;
+  border-bottom: none;
+}
+.custom-color-picker .react-colorful__hue {
+  height: 24px !important;
+  border-radius: 0 0 12px 12px !important;
+}
+.custom-color-picker .react-colorful__pointer {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.none-swatch-pattern {
+  background-color: white !important;
+  background-image: linear-gradient(135deg, transparent 48%, #ef4444 48%, #ef4444 52%, transparent 52%) !important;
+}
+
+@theme {
+  --breakpoint-sm: 600px;
+  --breakpoint-md: 768px;
+  --breakpoint-lg: 1024px;
+  --breakpoint-xl: 1180px; /* Was 1200 */
+  --color-app-bg: var(--app-bg);
+  --color-card-bg: var(--card-bg);
+  --color-card-border: var(--card-border);
+  --color-btn-bg: var(--btn-bg);
+  --color-btn-border: var(--btn-border);
+  --color-text-main: var(--text-main);
+  --color-text-muted: var(--text-muted);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
+  --color-success: var(--success);
+}
+
+:root {
+  /* Midnight (Default) */
+  --app-bg: #020617; /* slate-950 */
+  --card-bg: #0f172a; /* slate-900 */
+  --card-border: #1e293b; /* slate-800 */
+  --btn-bg: #1e293b; /* slate-800 */
+  --btn-border: #334155; /* slate-700 */
+  --text-main: #ffffff;
+  --text-muted: #94a3b8; /* slate-400 */
+  --accent: #2563eb; /* blue-600 */
+  --accent-hover: #3b82f6; /* blue-500 */
+  --danger: #ef4444; /* red-500 */
+  --warning: #f97316; /* orange-500 */
+  --success: #22c55e; /* green-500 */
+}
+
+[data-theme="light"] {
+  --app-bg: #f8fafc; /* slate-50 */
+  --card-bg: #ffffff;
+  --card-border: #e2e8f0; /* slate-200 */
+  --btn-bg: #f8fafc; /* slate-50 */
+  --btn-border: #cbd5e1; /* slate-300 */
+  --text-main: #0f172a; /* slate-900 */
+  --text-muted: #64748b; /* slate-500 */
+  --accent: #2563eb;
+  --accent-hover: #3b82f6;
+  --danger: #dc2626; /* red-600 */
+  --warning: #ea580c; /* orange-600 */
+  --success: #16a34a; /* green-600 */
+}
+
+[data-theme="industrial"] {
+  --app-bg: #0c0a09; /* stone-950 */
+  --card-bg: #1c1917; /* stone-900 */
+  --card-border: #44403c; /* stone-700 */
+  --btn-bg: #292524; /* stone-800 */
+  --btn-border: #57534e; /* stone-600 */
+  --text-main: #facc15; /* yellow-400 */
+  --text-muted: #a8a29e; /* stone-400 */
+  --accent: #eab308; /* yellow-500 */
+  --accent-hover: #facc15;
+  --danger: #b91c1c; /* red-700 */
+  --warning: #c2410c; /* orange-700 */
+  --success: #15803d; /* green-700 */
+}
+
+[data-theme="blueprint"] {
+  --app-bg: #082f49; /* sky-950 */
+  --card-bg: #0c4a6e; /* sky-900 */
+  --card-border: #0369a1; /* sky-700 */
+  --btn-bg: #075985; /* sky-800 */
+  --btn-border: #0ea5e9; /* sky-500 */
+  --text-main: #ffffff;
+  --text-muted: #7dd3fc; /* sky-300 */
+  --accent: #22d3ee; /* cyan-400 */
+  --accent-hover: #67e8f9; /* cyan-300 */
+  --danger: #f87171; /* red-400 */
+  --warning: #fb923c; /* orange-400 */
+  --success: #4ade80; /* green-400 */
+}
+
+[data-theme="retro"] {
+  --app-bg: #451a03; /* orange-950 */
+  --card-bg: #78350f; /* amber-900 */
+  --card-border: #b45309; /* amber-700 */
+  --btn-bg: #92400e; /* amber-800 */
+  --btn-border: #d97706; /* amber-600 */
+  --text-main: #fef3c7; /* amber-100 */
+  --text-muted: #d97706; /* amber-600 */
+  --accent: #f59e0b; /* amber-500 */
+  --accent-hover: #fbbf24; /* amber-400 */
+  --danger: #991b1b; /* red-800 */
+  --warning: #f97316; /* orange-500 */
+  --success: #166534; /* green-800 */
+}
+
+/* Hide number input spinners */
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+input[type="number"] {
+  -moz-appearance: textfield;
+}
+
+/* Custom Scrollbar */
+.custom-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  background: rgba(15, 23, 42, 0.5);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(59, 130, 246, 0.3);
+  border-radius: 10px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(59, 130, 246, 0.5);
+}
+
+@keyframes spin-slow {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.animate-spin-slow {
+  animation: spin-slow 3s linear infinite;
+}
+
+@keyframes fast-blink {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.1; }
+}
+
+.animate-fast-blink {
+  animation: fast-blink 0.25s linear 3;
+}
+
+@keyframes tour-flash {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0; }
+}
+
+.animate-tour-flash {
+  animation: tour-flash var(--tour-flash-duration, 1.2s) ease-in-out infinite;
+}
+
+.throttle-slider {
+  -webkit-appearance: none;
+  appearance: none;
+  background: var(--color-app-bg);
+  border: 1px solid var(--color-card-border);
+  border-radius: 9999px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.throttle-slider.vertical {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 1rem !important; /* matches h-4 */
+  height: 100% !important;
+  writing-mode: vertical-lr;
+  direction: rtl;
+  cursor: pointer;
+}
+
+.throttle-slider.thick {
+  border-radius: 12px;
+}
+
+.throttle-slider.vertical.thick {
+  width: 40px !important;
+}
+
+/* Custom Throttle Thumb Styling */
+.throttle-slider::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  appearance: none;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--thumb-color, var(--accent));
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.throttle-slider.thick::-webkit-slider-thumb {
+  width: 20px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.throttle-slider.vertical.thick::-webkit-slider-thumb {
+  width: 40px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+.throttle-slider::-moz-range-thumb {
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  background-color: var(--thumb-color, var(--accent));
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.throttle-slider.thick::-moz-range-thumb {
+  width: 20px;
+  height: 40px;
+  border-radius: 6px;
+}
+
+.throttle-slider.vertical.thick::-moz-range-thumb {
+  width: 40px;
+  height: 20px;
+  border-radius: 6px;
+}
+
+/* Prevent interaction with the highlighted element during the tour */
+.driver-active-element, 
+.driver-active-element * {
+  pointer-events: none !important;
+  cursor: default !important;
+}
+
+/* Ensure the tour popover (dialog) remains fully interactive */
+.driver-popover,
+.driver-popover * {
+  pointer-events: auto !important;
+}
+
+/* Prevent accidental text selection during the tour */
+body.driver-js-active {
+  user-select: none;
+}
+
+.driver-popover {
+  user-select: auto;
+  display: flex !important;
+  flex-direction: column !important;
+}
+
+.driver-popover-footer {
+  margin-top: auto !important;
+}
+
+body.driver-popover-delayed .driver-popover {
+  opacity: 0 !important;
+  pointer-events: none !important;
+  transition: opacity 0.2s ease-in-out;
+}
+
+/* Ensure the sights toggle button bypasses all driver.js generic button overrides */
+.driver-popover button.driver-popover-sights-toggle {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+  padding: 4px !important;
+  margin: 0 !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: normal !important;
+  color: var(--accent) !important;
+  opacity: 0.6 !important;
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+.driver-popover button.driver-popover-sights-toggle:hover {
+  opacity: 1 !important;
+}
+
+.driver-popover button.driver-popover-sights-toggle.active {
+  opacity: 1 !important;
+}
+
+.driver-popover button.driver-popover-replay-btn {
+  background: transparent !important;
+  background-color: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+  outline: none !important;
+  width: auto !important;
+  height: auto !important;
+  min-width: 0 !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: normal !important;
+  color: var(--accent) !important;
+  opacity: 0.6 !important;
+  transition: opacity 0.2s ease-in-out !important;
+}
+
+.driver-popover button.driver-popover-replay-btn:hover {
+  opacity: 1 !important;
+}
+
+/* Custom Popover Positional Shift Classes */
+.custom-popover-shift-up {
+  transform: translateY(-20px) !important;
+}
+.custom-popover-shift-up-large {
+  transform: translateY(-40px) !important;
+}
+.custom-popover-shift-down {
+  transform: translateY(20px) !important;
+}
+.custom-popover-shift-down-large {
+  transform: translateY(40px) !important;
+}
+.custom-popover-shift-left {
+  transform: translateX(-20px) !important;
+}
+.custom-popover-shift-left-large {
+  transform: translateX(-40px) !important;
+}
+.custom-popover-shift-right {
+  transform: translateX(20px) !important;
+}
+.custom-popover-shift-right-large {
+  transform: translateX(40px) !important;
+}
+
