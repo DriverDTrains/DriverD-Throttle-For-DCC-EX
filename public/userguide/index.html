@@ -1,0 +1,3203 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>@Driver-D Throttle for DCC-EX - Interactive Guide</title>
+    <!-- Tailwind CSS Play CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#f8fafc',
+                            100: '#f1f5f9',
+                            400: '#38bdf8',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0f172a',
+                            950: '#020617',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&display=swap');
+        
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0b0f19;
+            color: #f1f5f9;
+        }
+
+        /* Customize scrollbars */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #020617;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #1e293b;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #334155;
+        }
+
+        /* Pulsing animations for active hotspots */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.6); opacity: 0; }
+            50% { opacity: 0.5; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+        .pulse::after {
+            content: '';
+            position: absolute;
+            left: -8px;
+            top: -8px;
+            right: -8px;
+            bottom: -8px;
+            border-radius: 50%;
+            border: 2px solid #38bdf8;
+            animation: pulse-ring 1.8s cubic-bezier(0.25, 0, 0, 1) infinite;
+        }
+        
+        /* Grabbing cursors during builder mode */
+        .cursor-grab { cursor: grab; }
+        .cursor-grabbing { cursor: grabbing; }
+
+        /* Force two-column layout on all viewport widths when embedded in app */
+        body.is-embedded {
+            height: 100vh !important;
+            min-height: 100vh !important;
+            overflow: hidden !important;
+            --header-h: 0px;
+        }
+        
+        body.is-embedded main {
+            display: grid !important;
+            grid-template-columns: repeat(12, minmax(0, 1fr)) !important;
+            height: 100vh !important;
+        }
+        
+        body.is-embedded .lg\:col-span-3 {
+            grid-column: span 3 / span 3 !important; /* 3 columns for sidebar */
+            max-height: 100vh !important;
+        }
+        
+        body.is-embedded .lg\:col-span-9 {
+            grid-column: span 9 / span 9 !important; /* 9 columns for screencast content */
+            max-height: 100vh !important;
+        }
+        
+        body.is-embedded header {
+            display: none !important;
+        }
+
+        .standard-section-toggles {
+            min-width: 620px;
+        }
+
+        /* Embedded Compact Header Logic */
+        body.is-embedded .standard-section-toggles {
+            display: none !important;
+        }
+        body:not(.is-embedded) .compact-section-toggles {
+            display: none !important;
+        }
+
+        /* Standalone compact navigation when screen is narrower than standard-section-toggles minimum width */
+        @media (max-width: 655px) {
+            body:not(.is-embedded) .standard-section-toggles {
+                display: none !important;
+            }
+            body:not(.is-embedded) .compact-section-toggles {
+                display: flex !important;
+            }
+        }
+
+        /* Sidebar Collapse Logic */
+        body.sidebar-collapsed #sidebar-panel {
+            display: none !important;
+        }
+        body.sidebar-collapsed .lg\:col-span-9 {
+            grid-column: span 12 / span 12 !important;
+        }
+
+        @media (max-width: 850px) {
+            body.is-embedded .lg\:col-span-3 {
+                grid-column: span 4 / span 4 !important; /* expand sidebar slightly on narrower frames */
+            }
+            body.is-embedded .lg\:col-span-9 {
+                grid-column: span 8 / span 8 !important;
+            }
+            body.is-embedded header div.flex.items-center.gap-2.bg-slate-900 {
+                gap: 0.125rem !important;
+                padding: 0.125rem !important;
+            }
+            body.is-embedded header div.flex.items-center.gap-2.bg-slate-900 button {
+                padding-left: 0.4rem !important;
+                padding-right: 0.4rem !important;
+                padding-top: 0.2rem !important;
+                padding-bottom: 0.2rem !important;
+                font-size: 10px !important;
+            }
+        }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col overflow-x-hidden select-none">
+    <script>
+        if (window.self !== window.top) {
+            document.body.classList.add('is-embedded');
+        }
+    </script>
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-slate-800 bg-brand-950 px-6 py-4 flex flex-wrap items-center justify-between gap-4 z-10 shadow-lg">
+        <div class="flex items-center gap-3">
+            <div class="h-12 w-12 rounded-xl overflow-hidden border border-slate-400 bg-slate-900 flex items-center justify-center shadow-md">
+                <img src="throttleiconbydriverd.png" alt="App Icon" class="h-full w-full object-cover" onerror="this.remove(); document.getElementById('fallback-emoji').classList.remove('hidden');" />
+                <span id="fallback-emoji" class="hidden text-md">🚂</span>
+            </div>
+            <div>
+                <h1 id="app-title" class="text-lg font-bold tracking-tight text-white flex items-center gap-2">
+                    @DRIVER-D Throttle for DCC-EX
+                </h1>
+                <p class="text-xs text-slate-400 font-medium">Interactive Guide & Tour</p>
+            </div>
+        </div>
+
+        <!-- Section Toggles -->
+        <div class="standard-section-toggles flex items-center gap-2 bg-slate-900 border border-slate-800 p-1 rounded-xl">
+            <button onclick="switchSection(1)" id="sec-tab-1" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/10">
+                1. Intro & Welcome
+            </button>
+            <button onclick="switchSection(2)" id="sec-tab-2" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                2. Header Panel
+            </button>
+            <button onclick="switchSection(3)" id="sec-tab-3" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                3. Track Power Panel
+            </button>
+            <button onclick="switchSection(4)" id="sec-tab-4" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                4. Loco Address Panel
+            </button>
+            <button onclick="switchSection(5)" id="sec-tab-5" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                5. Throttle Control Panel
+            </button>
+            <button onclick="switchSection(6)" id="sec-tab-6" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                6. Loco Functions Panel
+            </button>
+            <button onclick="switchSection(7)" id="sec-tab-7" class="px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200">
+                7. Custom Settings
+            </button>
+        </div>
+
+        <!-- Compact Section Toggles for Embedded Mode -->
+        <div class="compact-section-toggles flex items-center bg-sky-600 border border-solid border-white/50 hover:border-white p-1 rounded-xl shadow-inner">
+            <button onclick="prevSection()" id="section-prev-btn" class="px-3 py-1.5 text-xs font-bold rounded-lg text-white/60 hover:text-white cursor-pointer disabled:opacity-25 disabled:text-text-muted disabled:cursor-not-allowed transition-all" title="Previous Section">
+                &lt;&lt;
+            </button>
+            <span id="compact-section-title" class="px-4 py-1.5 text-xs font-black text-slate-200 uppercase tracking-wider text-center min-w-[200px] whitespace-nowrap">
+                1. Intro & Welcome
+            </span>
+            <button onclick="nextSection()" id="section-next-btn" class="px-3 py-1.5 text-xs font-bold rounded-lg text-white/60 hover:text-white cursor-pointer disabled:opacity-25 disabled:text-text-muted disabled:cursor-not-allowed transition-all" title="Next Section">
+                &gt;&gt;
+            </button>
+        </div>
+
+        <!-- Tool / Utility Bar -->
+        <div class="flex items-center gap-4">
+            <div class="flex items-center gap-2 bg-slate-900/60 border border-slate-850 px-3 py-1.5 rounded-lg">
+                <span class="inline-block w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+                <span id="progress-text" class="text-xs font-mono font-medium text-slate-300">Page 1 of 27</span>
+            </div>
+            <!-- Back to Throttle Button (Visible on iOS in new tab only) -->
+            <button onclick="handleBackToThrottle()" id="back-to-throttle-btn" style="display: none;" class="items-center gap-1.5 px-3 py-1.5 text-xs font-semibold bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all shadow-md select-none shrink-0 cursor-pointer">
+                🚂 <span>Back to Throttle</span>
+            </button>
+            <button onclick="toggleBuilder()" id="builder-btn" class="flex items-center gap-2 px-3 py-1.5 text-xs font-semibold border border-dashed border-slate-700 hover:border-sky-500 rounded-lg hover:bg-sky-500/5 transition-all">
+                ⚙️ <span id="builder-btn-label">Tuner Mode Off</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content Grid -->
+    <main class="flex-1 grid grid-cols-1 lg:grid-cols-12 gap-0 overflow-hidden relative">
+
+        <!-- Sidebar List (4 Columns) -->
+        <div id="sidebar-panel" class="lg:col-span-3 bg-sky-600/30 border-r border-slate-850 flex flex-col h-full max-h-[calc(100vh-73px)]">
+            
+            <!-- Quick Progress Stats -->
+            <div class="p-4 bg-sky-600/30 border-b border-slate-850">
+                <div class="flex items-center justify-between text-xs mb-2 text-slate-400 font-medium">
+                    <span>Tour Progression</span>
+                    <span id="pct-progress">4% Complete</span>
+                </div>
+                <div class="w-full h-1.5 bg-slate-800 rounded-full overflow-hidden">
+                    <div id="progress-bar-fill" class="h-full bg-sky-500 transition-all duration-300" style="width: 4%"></div>
+                </div>
+            </div>
+
+            <!-- Tour Stops / Sub-sections Row -->
+            <div id="tour-stops-container" class="px-2 py-3 bg-slate-950/60 border-b border-slate-850 flex flex-wrap items-stretch gap-1.5 hidden select-none">
+                <!-- Dynamically generated tour stop buttons -->
+            </div>
+
+            <!-- Scrollable Pages List -->
+            <div id="steps-scroller" class="flex-1 overflow-y-auto p-4 space-y-3">
+                <!-- Dynamically generated list cards -->
+            </div>
+        </div>
+
+        <!-- Screencast Workspace (8 Columns) -->
+        <div id="content-workspace" class="lg:col-span-9 bg-sky-600/30 flex flex-col h-full max-h-[calc(100vh-73px)] relative overflow-hidden">
+            
+            <!-- Active Page Detail Banner (Positioned above image) -->
+            <div class="p-4 bg-sky-600/30 border-b border-slate-800 flex flex-col sm:flex-row sm:items-start justify-between gap-4 shadow-xl z-10 transition-all duration-305">
+                <!-- Left Vertical Container (divided horizontally into Title/Badge and Description) -->
+                <div class="flex-1 flex flex-col justify-start min-w-0">
+                    <div class="flex items-center gap-2 mb-1.5">
+                        <button onclick="toggleSidebar()" id="sidebar-toggle-btn" class="flex items-center justify-center w-7 h-7 rounded bg-slate-900 border border-slate-800 hover:border-slate-700 text-slate-400 hover:text-white transition-all cursor-pointer mr-1" title="Hide Sidebar Panel">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                                <rect width="18" height="18" x="3" y="3" rx="2" />
+                                <path d="M9 3v18" />
+                                <path d="m16 15-3-3 3-3" />
+                            </svg>
+                        </button>
+                        <span id="active-step-badge" class="px-2 py-0.5 rounded bg-sky-500/10 border border-sky-500/20 text-sky-400 text-xs font-mono font-bold uppercase tracking-wider shrink-0">
+                            Page 1
+                        </span>
+                        <h2 id="active-step-title" class="text-sm font-bold text-white tracking-wide truncate">
+                            Welcome
+                        </h2>
+                    </div>
+                    <p id="active-step-desc" class="text-xl leading-relaxed text-slate-300 font-normal">
+                        Welcome to the @DRIVER-D Throttle for DCC-EX! All aboard! We'll start with a quick introduction to the throttle's five basic control panels.
+                    </p>
+                </div>
+                <!-- Right Vertical Container (Buttons/Controls, pinned to self-start to stay fixed) -->
+                <div class="flex flex-col gap-2 py-5 shrink-0 self-start items-stretch min-w-[170px]">
+                    <div class="flex items-center gap-2">
+                        <button onclick="prevStep()" id="prev-btn" class="flex-1 px-3 py-1.5 text-center text-xs font-medium border border-slate-800 hover:border-slate-700 bg-slate-900 hover:bg-slate-850 text-white rounded-lg transition-all cursor-pointer">
+                            ← Previous
+                        </button>
+                        <button onclick="nextStep()" id="next-btn" class="flex-1 px-3 py-1.5 text-center text-xs font-medium bg-sky-600 hover:bg-sky-500 text-white rounded-lg font-semibold transition-all cursor-pointer">
+                            Next →
+                        </button>
+                    </div>
+                    <div class="flex items-center justify-center gap-3">
+                        <button onclick="decreaseTextSize()" id="dec-text-btn" class="w-8 h-8 flex items-center justify-center text-base font-bold border border-slate-400 hover:border-white bg-yellow-700 hover:bg-yellow-500 text-slate-300 rounded-lg transition-all cursor-pointer select-none" title="Decrease description text size">
+                            -
+                        </button>
+                        <div class="flex items-center gap-1.5 text-slate-300 font-semibold select-none" title="Text Size">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M4 7V4h16v3M9 20h6M12 4v16" />
+                            </svg>
+                        </div>
+                        <button onclick="increaseTextSize()" id="inc-text-btn" class="w-8 h-8 flex items-center justify-center text-base font-bold border border-slate-400 hover:border-white bg-sky-700 hover:bg-sky-500 text-slate-300 rounded-lg transition-all cursor-pointer select-none" title="Increase description text size">
+                            +
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Screenshot Container -->
+            <div id="screenshot-container" class="flex-1 flex items-center justify-center p-4 lg:p-8 overflow-auto relative">
+                
+                <!-- The Interactive Board (Main Image & Overlaid Markers) -->
+                <div id="guide-board" class="relative max-w-full max-h-full rounded-2xl shadow-2xl border border-slate-800/80 overflow-hidden bg-slate-950 transition-all duration-300 flex items-center justify-center shadow-black/80">
+                    
+                    <!-- App Shot Screen -->
+                    <img id="screenshot-img" src="1.Intro/Welcome_sm.png" alt="App Screenshot" class="w-full h-full pointer-events-none select-none transition-opacity duration-300">
+                    
+                    <!-- Hotspots Map Overlay -->
+                    <div id="hotspot-overlay" class="absolute inset-x-0 inset-y-0 w-full h-full cursor-default select-none pointer-events-auto">
+                        <!-- Hotspots dynamically loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <!-- Floating Coordinates Tuner Widget (Renders ONLY if builder is ON) -->
+            <div id="tuner-widget" class="hidden absolute bottom-4 left-4 right-4 bg-brand-950/95 border border-dashed border-sky-500/50 p-4 rounded-xl shadow-2xl backdrop-blur z-20 transition-all">
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="text-xs max-w-sm md:max-w-md">
+                        <h4 class="font-bold text-sky-400 flex items-center gap-1.5">
+                            🛠️ Coordinate & Image Tuner Active
+                        </h4>
+                        <p class="text-slate-400 mt-0.5">Drag pins directly or double-click to place. Select/change the image file for this page below.</p>
+                    </div>
+
+                    <!-- Image Selection Controls -->
+                    <div class="flex flex-wrap items-center gap-2 bg-slate-900 border border-slate-800 p-1.5 rounded-lg">
+                        <span class="text-xs font-semibold text-slate-300 pl-1.5">Image:</span>
+                        <select id="tuner-img-select" onchange="onTunerImageSelectChange(this.value)" class="bg-slate-950 text-xs text-white border border-slate-700 rounded px-2 py-1 focus:ring-1 focus:ring-sky-500 outline-none">
+                            <option value="1.Intro/Welcome_sm.png">1.Intro/Welcome_sm.png</option>
+                            <option value="2.Header/Header_sm.png">2.Header/Header_sm.png</option>
+                            <option value="2.Header/Serial_sm.png">2.Header/Serial_sm.png</option>
+                            <option value="2.Header/Wifi_sm.png">2.Header/Wifi_sm.png</option>
+                            <option value="2.Header/SerialMonitor_sm.png">2.Header/SerialMonitor_sm.png</option>
+                            <option value="2.Header/AppIcon_sm.png">2.Header/AppIcon_sm.png</option>
+                            <option value="2.Header/DisplaySettings_sm.png">2.Header/DisplaySettings_sm.png</option>
+                            <option value="custom">Custom...</option>
+                        </select>
+                        <input id="tuner-img-custom" type="text" oninput="onTunerImageCustomInput(this.value)" placeholder="Custom path..." class="hidden bg-slate-950 text-xs text-white border border-slate-700 rounded px-2 py-1 w-40 focus:ring-1 focus:ring-sky-500 outline-none" />
+                    </div>
+
+                    <div id="active-drag-coords" class="text-xs font-mono font-semibold text-slate-300 bg-slate-900 border border-slate-800 px-3 py-1.5 rounded-lg">
+                        X: --% | Y: --%
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="copyCoordinatesCode()" class="px-4 py-1.5 text-xs font-semibold bg-sky-600 hover:bg-sky-500 text-white rounded-lg transition-all shadow-md">
+                            📋 Copy Updated Code
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <!-- Verbatim Code Sandbox Script -->
+    <script>
+        const TOUR_DATA = [
+            // ========== SECTION 1: WELCOME & INTRO ==========
+            {
+                id: 1,
+                section: 1,
+                title: "All aboard!",
+                desc: "Welcome to the @DRIVER-D Throttle for DCC-EX! All aboard! We'll start with a quick introduction to the throttle's five basic control panels.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 37,
+                y: 9
+            },
+            {
+                id: 2,
+                section: 1,
+                title: "Throttle Header Panel",
+                desc: "This is the Throttle Header Panel. Here we can connect to our DCC-EX Command Station or an Emulator, as well as configure many custom settings to personalize the throttle and make it our own.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 50,
+                y: 9
+            },
+            {
+                id: 3,
+                section: 1,
+                title: "Track Power Panel",
+                desc: "In the Track Power Panel we can toggle the power to the tracks, assign track blocks, and join the main and programming tracks.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 21,
+                y: 19.3
+            },
+            {
+                id: 4,
+                section: 1,
+                title: "Loco Address Panel",
+                desc: "In the Loco Address Panel we can select locomotives by address or pick from our saved presets, manage our roster, configure consists, and customize photos and colors. This is also where we can save or upload our throttle configuration files.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 21,
+                y: 33
+            },
+            {
+                id: 5,
+                section: 1,
+                title: "Throttle Control Panel",
+                desc: "The Throttle Control Panel lets us control the speed of our locomotives. Options are available for both horizontal and vertical sliders, as well as standard and switching-shunting sliders. The Throttle Control Panel also supports mouse wheel control and keyboard shortcuts.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 71.5,
+                y: 19.3
+            },
+            {
+                id: 6,
+                section: 1,
+                title: "Loco Functions Panel",
+                desc: "The Loco Functions, Routes, and Turnouts Panel lets us configure all our locomotive DCC decoder functions, as well as control the turnouts and routes configured in our DCC-EX command station. The Loco Functions Panel also supports keyboard shortcuts for all locomotive DCC functions.",
+                image: "1.Intro/Welcome_sm.png",
+                x: 71.5,
+                y: 57.4
+            },
+            // ========== SECTION 2: HEADER DETAILS ==========
+            {
+                id: 7,
+                section: 2,
+                title: "Throttle Header Panel",
+                desc: "Let's take a closer look at the controls in the throttle's Header Panel.",
+                image: "2.Header/Serial2_sm.png",
+                x: 50,
+                y: 9.5
+            },
+            {
+                id: 8,
+                section: 2,
+                title: "Connectivity",
+                desc: "Here we can decide whether we would like to connect to our DCC-EX command station via a USB Serial cable or over WiFi. We can also use the Emulator if we would just like to try out or configure the throttle.",
+                image: "2.Header/Serial2_sm.png",
+                x: 77.8,
+                y: 15.5
+            },
+            {
+                id: 9,
+                section: 2,
+                title: "Serial Connection",
+                desc: "When connecting over serial, we will be asked to select which serial port to connect to. We'll select the USB port that our DCC-EX command station is connected to. We may also be asked for permission to access our computer's serial or bluetooth ports.",
+                image: "2.Header/SerialSelect_sm.png",
+                x: 50,
+                y: 34.6
+            },
+            {
+                id: 10,
+                section: 2,
+                title: "WiFi Selection",
+                desc: "When connecting over Wi-Fi...",
+                image: "2.Header/WiFi2_sm.png",
+                x: 84.4,
+                y: 15.5
+            },
+            {
+                id: 11,
+                section: 2,
+                title: "WiFi Connection",
+                desc: "...We will need to make sure that our computer and other devices such as our smart phone or tablet are on the same local Wi-Fi network as our DCC-EX command station.",
+                image: "2.Header/Wifi_sm.png",
+                x: 50,
+                y: 28
+            },
+            {
+                id: 12,
+                section: 2,
+                title: "WiFi Configuration",
+                desc: "We will also need to enter our DCC-EX command station's IP address and port number, which we can typically find shown on the command station's LCD or OLED display.",
+                image: "2.Header/WiFi2_sm.png",
+                x: 64,
+                y: 10
+            },
+            {
+                id: 13,
+                section: 2,
+                title: "Emulator Mode",
+                desc: "There is also a DCC-EX emulator that we can use if we just want to try out or configure the throttle. [Note: The Emulator does not emulate all DCC-EX commands.]",
+                image: "2.Header/Header_sm.png",
+                x: 92.2,
+                y: 15.5
+            },
+            {
+                id: 14,
+                section: 2,
+                title: "Connect",
+                desc: "After choosing which connection method we want to use to connect to our DCC-EX command station, or after selecting the Emulator, we can press the 'Connect' button.",
+                image: "2.Header/Header_sm.png",
+                x: 91,
+                y: 4
+            },
+            {
+                id: 15,
+                section: 2,
+                title: "Serial Traffic Monitor",
+                desc: "Once we have connected to our DCC-EX command station or the Emulator, we can open the serial traffic monitor.",
+                image: "2.Header/Connect_sm.png",
+                x: 79.4,
+                y: 4
+            },
+            {
+                id: 16,
+                section: 2,
+                title: "Native Protocol Monitor",
+                desc: "In the serial traffic monitor we can view the DCC-EX native protocol commands and information flowing back-and-forth between the throttle and the command station. We can also send DCC-EX native protocol commands to the command station via the input command line at the bottom.",
+                image: "2.Header/SerialMonitor2_sm.png",
+                x: 30,
+                y: 70.5
+            },
+            {
+                id: 17,
+                section: 2,
+                title: "Terminal Controls",
+                desc: "There are also buttons to clear the serial monitor as well as to tell DCC-EX to clear its registry of currently active locomotives.",
+                image: "2.Header/SerialMonitor2_sm.png",
+                x: 87.4,
+                y: 73.4
+            },
+            {
+                id: 18,
+                section: 2,
+                title: "Sync Locomotive Status",
+                desc: "When connected to our DCC-EX command station or the Emulator, there is also a button to refresh or sync the status of all our locomotives.",
+                image: "2.Header/Sync_sm.png",
+                x: 69.8,
+                y: 4
+            },
+            {
+                id: 19,
+                section: 2,
+                title: "Monitor Results",
+                desc: "After pressing the sync button, we can see the status of our tracks and all our active locomotives in the serial monitor window.",
+                image: "2.Header/LocoSync_sm.png",
+                x: 30,
+                y: 85
+            },
+            {
+                id: 20,
+                section: 2,
+                title: "Connection Status",
+                desc: "The throttle will show our connection status here, along with the IP address and port number (3000) of the computer running the throttle, which we can use as a bridge to connect to our DCC-EX command station from a smart phone or tablet.",
+                image: "2.Header/Connect_sm.png",
+                x: 19,
+                y: 13.2
+            },
+            {
+                id: 21,
+                section: 2,
+                title: "Custom App Icon",
+                desc: "The throttle also features an icon that we can customize and configure. Click the icon to open the Custom App Icon Settings.",
+                image: "2.Header/Connect_sm.png",
+                x: 4.8,
+                y: 13.2
+            },
+            {
+                id: 22,
+                section: 2,
+                title: "App Icon Settings",
+                desc: "The Custom App Icon Settings panel allows us to upload our own custom icon (PNG or SVG file) and configure its appearance in the throttle header, the locomotive preset buttons, and as the watermark in the throttle speed control panel.",
+                image: "2.Header/AppIcon_sm.png",
+                x: 32.8,
+                y: 21.4
+            },
+            {
+                id: 23,
+                section: 2,
+                title: "Display Settings",
+                desc: "Finally, the Display Settings button lets us control the size and appearance of the throttle, and configure the throttle's custom settings.",
+                image: "2.Header/Header_sm.png",
+                x: 77.6,
+                y: 4
+            },
+            {
+                id: 24,
+                section: 2,
+                title: "Display Settings Panel",
+                desc: "On the Display settings panel we can choose from 4 layout sizes depending on the size of our screen or device.",
+                image: "2.Header/DisplaySettingsBlur_sm.png",
+                x: 54.5,
+                y: 22.2
+            },
+            {
+                id: 25,
+                section: 2,
+                title: "Throttle Themes",
+                desc: "We can also choose from 5 color themes.",
+                image: "2.Header/DisplaySettingsBlur_sm.png",
+                x: 54.5,
+                y: 36.9
+            },
+            {
+                id: 26,
+                section: 2,
+                title: "User Custom Settings",
+                desc: "And we can configure dozens of user custom settings which we can save and recall from memory. We'll look at those some more at the end of the tour. This is also where we can find the interactive tour and user guide.",
+                image: "2.Header/DisplaySettingsBlur_sm.png",
+                x: 54.5,
+                y: 47.9
+            },
+            {
+                id: 27,
+                section: 2,
+                title: "Throttle Header Summary",
+                desc: "We have now completed our tour of the Driver-D Throttle for DCC-EX Header Panel! Let's move on to the next stop!",
+                image: "2.Header/Header_sm.png",
+                x: 41.8,
+                y: 16.7
+            },
+            // ========== SECTION 3: TRACK POWER PANEL ==========
+            {
+                id: 28,
+                section: 3,
+                title: "Track Power Panel",
+                desc: "Let's take a closer look at the controls in the Track Power Panel.",
+                image: "3.Power/PowerStart_sm.png",
+                x: 21.5,
+                y: 17
+            },
+            {
+                id: 29,
+                section: 3,
+                title: "Track Power Button",
+                desc: "This is the power button. It controls the power to both the A & B track blocks on the DCC-EX command station.",
+                image: "3.Power/PowerStart_sm.png",
+                x: 40,
+                y: 24.4
+            },
+            {
+                id: 30,
+                section: 3,
+                title: "Power On",
+                desc: "When we are connected to our DCC-EX command station or the Emulator, pressing the power button will turn on and off the power to both the A & B track blocks.",
+                image: "3.Power/PowerOn_sm.png",
+                x: 40,
+                y: 24.4
+            },
+            {
+                id: 31,
+                section: 3,
+                title: "Join Tracks",
+                desc: "Pressing the Join button will 'join' the main and programming tracks (A & B blocks) so that we can run our locomotives on them as though they were one block.",
+                image: "3.Power/PowerJoin_sm.png",
+                x: 34,
+                y: 16.2
+            },
+            {
+                id: 32,
+                section: 3,
+                title: "Independent Block Control",
+                desc: "Pressing the gear icon will allow us to control the power to the A and B blocks independently.",
+                image: "3.Power/PowerJoinBlocks_sm.png",
+                x: 14.6,
+                y: 16.2
+            },
+            {
+                id: 33,
+                section: 3,
+                title: "Multiple Track Blocks",
+                desc: "If our DCC-EX command station has more than two track blocks, we will see buttons for all the blocks (up to 8) shown here.",
+                image: "3.Power/PowerBlocks2_sm.png",
+                x: 21.2,
+                y: 29.9
+            },
+            {
+                id: 34,
+                section: 3,
+                title: "Block Assignment",
+                desc: "If we long press on one of the track block power buttons, we can assign the type of power going to that block.",
+                image: "3.Power/PowerBlocks2_sm.png",
+                x: 26.7,
+                y: 25.0
+            },
+            {
+                id: 35,
+                section: 3,
+                title: "DC Support",
+                desc: "There are multiple options for DCC and DC power.",
+                image: "3.Power/PowerBlockB_sm.png",
+                x: 50,
+                y: 31.4
+            },
+            {
+                id: 36,
+                section: 3,
+                title: "Sync Status",
+                desc: "Click the sync icon to read the track status from the DCC-EX command station and update the track power buttons.",
+                image: "3.Power/PowerDC_sm.png",
+                x: 17.6,
+                y: 16.7
+            },
+            {
+                id: 37,
+                section: 3,
+                title: "Track Power Summary",
+                desc: "We have now looked at all the features of the Track Power Panel.",
+                image: "3.Power/PowerStart_sm.png",
+                x: 40.9,
+                y: 17
+            },
+            // ========== SECTION 4: LOCO ADDRESS PANEL ==========
+            {
+                id: 38,
+                section: 4,
+                title: "Loco Address Panel",
+                desc: "Now let's take a look at the Loco Address Panel. The Loco Address Panel is divided into several different parts.",
+                image: "4.Address/Address_sm.png",
+                x: 21.5,
+                y: 30.5
+            },
+            {
+                id: 39,
+                section: 4,
+                title: "Loco Address Display",
+                desc: "The address box displays the DCC address and direction of our currently selected locomotive or consist. The color of the number indicates the locomotive's forward or reverse direction, while the angle bracket indicates which way the locomotive is facing based on the settings in the Throttle Control Panel, which we'll look at later. If we've added a road name for our locomotive, the address box will show that too.",
+                image: "4.Address/Address_sm.png",
+                x: 11.5,
+                y: 38.5
+            },
+            {
+                id: 40,
+                section: 4,
+                title: "Manual Address Entry",
+                desc: "We can click in the address box and enter the DCC address for our locomotive.",
+                image: "4.Address/AddressEntry_sm.png",
+                x: 11.5,
+                y: 38.5
+            },
+            {
+                id: 41,
+                section: 4,
+                title: "Locomotive Presets",
+                desc: "We can create presets for all our locomotives that include each locomotive's road name and DCC address. We can decide how many presets to include in the throttle (up to 256 maximum) and can sort them to change their order. Finally, we can color each preset a different color with an accent color as well.",
+                image: "4.Address/Address_sm.png",
+                x: 21.5,
+                y: 71.8
+            },
+            {
+                id: 42,
+                section: 4,
+                title: "Using Presets",
+                desc: "Click one of the locomotive preset buttons to control that locomotive. The selected locomotive's DCC address and road number will appear in the loco address box. Pressing the preset button again will toggle the locomotive's direction, and the button will change color.",
+                image: "4.Address/SelectPreset_sm.png",
+                x: 9.0,
+                y: 71.8
+            },
+            {
+                id: 43,
+                section: 4,
+                title: "Roster Navigation",
+                desc: "Double-chevron arrows at either end of the address box allow us to scroll to our next or previous visible locomotive preset.",
+                image: "4.Address/ChevronBoth_sm.png",
+                x: 8.0,
+                y: 38.5
+            },
+            {
+                id: 44,
+                section: 4,
+                title: "Photo Swipe",
+                desc: "We can also swipe on a touch screen, or \"control-flick\" with the mouse pointer on the locomotive image to scroll to the next or previous preset.",
+                image: "4.Address/Address_sm.png",
+                x: 21.5,
+                y: 57.0
+            },
+            {
+                id: 45,
+                section: 4,
+                title: "The Hidden Preset",
+                desc: "If we manually enter the DCC address of a locomotive that is not in the throttle's 'roster', the throttle will remember that address for us as a 'hidden' preset when scrolling the presets. We can press the 'Clear' button to tell the roster to forget that 'hidden' preset and not include it when scrolling through our regular visible presets.",
+                image: "4.Address/AddressClear_sm.png",
+                x: 13.0,
+                y: 38.5
+            },
+            {
+                id: 46,
+                section: 4,
+                title: "Loco Address Panel Controls",
+                desc: "We can use the controls at the top of the Loco Address Panel to configure all our locomotive presets and consists, as well as how much information is displayed in the Loco Address Panel. We can also save and import our throttle configuration files here. Finally, there are some additional controls that can hide parts of the throttle when running on a smartphone or other small display.",
+                image: "4.Address/Address_sm.png",
+                x: 17.0,
+                y: 30.5
+            },
+            {
+                id: 47,
+                section: 4,
+                title: "Compact Presets",
+                desc: "Press the 'Compact Presets' button to hide or show the locomotive presets in the throttle. Hiding the presets can help save space on smartphones and smaller displays, where we can select our locomotives by swiping.",
+                image: "4.Address/HidePresets_sm.png",
+                x: 18.3,
+                y: 30.0
+            },
+            {
+                id: 48,
+                section: 4,
+                title: "Configure Presets",
+                desc: "Click the gear icon to configure all the Loco Address Panel settings and our locomotive roster and presets.",
+                image: "4.Address/EditPresets_sm.png",
+                x: 15.3,
+                y: 30.0
+            },
+            {
+                id: 49,
+                section: 4,
+                title: "Adding a Preset",
+                desc: "We can enter a DCC address and road name for one of our locomotives into a preset box, and that locomotive will be added to the throttle's locomotive roster.",
+                image: "4.Address/EditPreset1234b_sm.png",
+                x: 42.0,
+                y: 83.9
+            },
+            {
+                id: 50,
+                section: 4,
+                title: "Locomotive Photos",
+                desc: "We can upload a photo or image of our selected locomotive, or use a simple 'watermark' image of a steam or diesel locomotive. The image can be any size, but 324x230 works well. We can also delete a previously saved image.",
+                image: "4.Address/LocoImageWatermark_sm.png",
+                x: 21.4,
+                y: 67.0
+            },
+            {
+                id: 51,
+                section: 4,
+                title: "Adjust Presets Count",
+                desc: "Click on the '+' and '-' buttons to show more or fewer locomotive presets in the Loco Address Panel.",
+                image: "4.Address/EditLoco1234_sm.png",
+                x: 32.5,
+                y: 30.0
+            },
+            {
+                id: 52,
+                section: 4,
+                title: "Sort Presets",
+                desc: "Click on the 'Sort Presets' button (the button with the up and down arrows) to open a control panel where we can sort and configure our locomotive presets.",
+                image: "4.Address/EditPreset1234_sm.png",
+                x: 21.3,
+                y: 30.0
+            },
+            {
+                id: 53,
+                section: 4,
+                title: "Sort & Configure Presets",
+                desc: "On the Sort & Configure Presets control panel we can change the order of our locomotive presets, as well as how they are displayed. We can also edit the size of the throttle's locomotive roster, and import locomotives from DCC-EX. Finally, we can renumber or delete roster entries.",
+                image: "4.Address/SortCustom_sm.png",
+                x: 50.0,
+                y: 11.0
+            },
+            {
+                id: 54,
+                section: 4,
+                title: "Presets Sort Options",
+                desc: "We have several different ways that we can sort our locomotive presets. The order in which we sort the presets determines the order in which they appear in the Loco Address Panel in the throttle.",
+                image: "4.Address/SortCustom_sm.png",
+                x: 33.0,
+                y: 28.3
+            },
+            {
+                id: 55,
+                section: 4,
+                title: "Include Presets in Sort",
+                desc: "Note that only the locomotive presets with the marked checkboxes will be included when we sort the presets, and if we uncheck a box on a preset, it will drop to the bottom of the list below those included in the sort. This can help us easily add or remove which locomotives we want to include in the throttle presets.",
+                image: "4.Address/SortCustomCheckboxes_sm.png",
+                x: 33.0,
+                y: 82.8
+            },
+            {
+                id: 56,
+                section: 4,
+                title: "Manual Custom Sort",
+                desc: "We can manually sort the locomotive presets by pressing the up and down arrows in the individual presets until we get the order we want. This will give us our 'Custom' sort of locomotive presets.",
+                image: "4.Address/SortCustomArrow_sm.png",
+                x: 33.0,
+                y: 43.7
+            },
+            {
+                id: 57,
+                section: 4,
+                title: "Sort by DCC Address (ID)",
+                desc: "We can also sort the presets by locomotive DCC address (ID), in either ascending or descending order.",
+                image: "4.Address/SortID_sm.png",
+                x: 33.0,
+                y: 28.3
+            },
+            {
+                id: 58,
+                section: 4,
+                title: "Sort by Road Name & Address",
+                desc: "And we can sort the locomotive presets by their road names, again in either ascending or descending order, with the DCC addresses (ID) being used as the second-level sort for each road name, also in ascending or descending order.",
+                image: "4.Address/SortRoadDnUp_sm.png",
+                x: 33.0,
+                y: 28.3
+            },
+            {
+                id: 59,
+                section: 4,
+                title: "New Custom Sort",
+                desc: "Note that if we manually move one of the presets up or down after sorting them by DCC address or road name, we will immediately create a new 'Custom' sort, replacing our previous one.",
+                image: "4.Address/SortNewCustom2_sm.png",
+                x: 33.0,
+                y: 43.8
+            },
+            {
+                id: 60,
+                section: 4,
+                title: "Preset Configuration",
+                desc: "Each locomotive preset also has a palette icon. This allows us to set the colors for that locomotive preset in the throttle.",
+                image: "4.Address/SortNewCustom2_sm.png",
+                x: 65.8,
+                y: 36.6
+            },
+            {
+                id: 61,
+                section: 4,
+                title: "Preset Button Color",
+                desc: "When we click on the palette icon, the Loco Button Color picker will open. Here we can choose a background color for our preset. The slider at the top lets us choose the color's opacity, which is how intense it is.",
+                image: "4.Address/LocoButtonColor_sm.png",
+                x: 63.5,
+                y: 21.6
+            },
+            {
+                id: 62,
+                section: 4,
+                title: "Custom Loco Color",
+                desc: "If we don't like any of the color swatches shown, we can click the 'Custom / Background' button to open a full-spectrum color picker for 24-bit color.",
+                image: "4.Address/CustomColorPicker_sm.png",
+                x: 64.0,
+                y: 66.5
+            },
+            {
+                id: 63,
+                section: 4,
+                title: "Loco Accent Color",
+                desc: "In addition to picking a color for the preset button background, we can select an accent color. This color will appear as a stripe along the bottom edge of the locomotive preset button, just as many locomotives have a stripe on their cab body.",
+                image: "4.Address/LocoButtonColor_sm.png",
+                x: 36.5,
+                y: 15.8
+            },
+            {
+                id: 64,
+                section: 4,
+                title: "Change to Accent Color Picker",
+                desc: "Click on the 'Loco Button Color' title at the top of the color picker and it will switch to the Loco Accent Color picker.",
+                image: "4.Address/LocoColorButton_sm.png",
+                x: 60.0,
+                y: 11.8
+            },
+            {
+                id: 65,
+                section: 4,
+                title: "Select Accent Color",
+                desc: "Again, we can select one of the available colors or use the custom color picker, and adjust the color's opacity.",
+                image: "4.Address/LocoAccentColor_sm.png",
+                x: 64.0,
+                y: 28.4
+            },
+            {
+                id: 66,
+                section: 4,
+                title: "Done or Cancel",
+                desc: "After we have selected our locomotive preset button background color and accent color, if desired, click the 'Done' button to store the color(s) with the preset. We can also 'Cancel', or select 'None' for no color.",
+                image: "4.Address/LocoColorButton_sm.png",
+                x: 36.5,
+                y: 88.3
+            },
+            {
+                id: 67,
+                section: 4,
+                title: "Show Colors & Names",
+                desc: "To show the colors on the presets in the Loco Address Panel in the throttle, click the color button at the top of the Sort & Configure Presets panel so that it changes from 'Color Off' to 'Color On'. The 'Names' button next to it is used to show or hide the locomotive road names that we saw earlier in the preset buttons on the Loco Address panel in the throttle.",
+                image: "4.Address/SortNewCustom2_sm.png",
+                x: 46.0,
+                y: 23.5
+            },
+            {
+                id: 68,
+                section: 4,
+                title: "Preset Renumbering",
+                desc: "Each preset on the Sort & Configure Presets panel also has a red gear icon that we can use to delete or renumber the roster entry for that locomotive.",
+                image: "4.Address/SortNewCustom2_sm.png",
+                x: 57.8,
+                y: 33.5
+            },
+            {
+                id: 69,
+                section: 4,
+                title: "Delete or Renumber",
+                desc: "Note that renumbering a preset will have no effect on our locomotive's actual DCC address, so unless we also change the address in our locomotive's DCC decoder, our preset will no longer work with that locomotive. However, we can renumber a preset if we want to use it for a different locomotive, or if we have multiple locomotives with the same DCC address, which we will discuss later.",
+                image: "4.Address/DeleteLoco_sm.png",
+                x: 66.0,
+                y: 60.7
+            },
+            {
+                id: 70,
+                section: 4,
+                title: "Global Roster Settings",
+                desc: "Finally, there is a 'Roster' button at the top of the Sort & Configure Presets panel that lets us manage the size of our roster, as well as import roster entries from our DCC-EX command station.",
+                image: "4.Address/SortNewCustom_sm.png",
+                x: 66.5,
+                y: 20.3
+            },
+            {
+                id: 71,
+                section: 4,
+                title: "Manage Roster Capacity",
+                desc: "In the Manage Roster control panel we can adjust sliders to set how many locomotives we have in our roster, and how many presets are included in the Loco Address Panel in the throttle.",
+                image: "4.Address/ManageRoster10_sm.png",
+                x: 49.4,
+                y: 25
+            },
+            {
+                id: 72,
+                section: 4,
+                title: "Roster Capacity",
+                desc: "The Roster Capacity slider is used to set the number of locomotive presets we want to include in the Sort & Configure Presets panel. Remember, not all of the locomotive presets in the Sort & Configure Presets panel will be shown in the Loco Address Panel in the throttle. But by having the locomotive presets available in the Sort & Configure Presets panel, we can easily move locomotives up on the list into one of the visible presets so they appear in the throttle. The default roster capacity is 16 locomotives out of 32 maximum possible slots. However we can increase the maximum number of slots by pressing on the number 32 at the right edge of the slider, and selecting a new maximum.",
+                image: "4.Address/ManageRoster10_sm.png",
+                x: 66.2,
+                y: 51.4
+            },
+            {
+                id: 73,
+                section: 4,
+                title: "Maximum Storage Limit",
+                desc: "Note that the throttle may become sluggish if we increase the maximum number of preset slots to 128 or 256, but your mileage may vary.",
+                image: "4.Address/RosterSize32_sm.png",
+                x: 64,
+                y: 59.4
+            },
+            {
+                id: 74,
+                section: 4,
+                title: "Visible Presets",
+                desc: "The Visible Presets slider shows the number of locomotive presets visible in the Loco Address Panel in the throttle. This is the same number that we saw earlier in the header of the Loco Address Panel, which we adjusted with the + and - buttons.",
+                image: "4.Address/ManageRoster10_sm.png",
+                x: 66.4,
+                y: 64.9
+            },
+            {
+                id: 75,
+                section: 4,
+                title: "Import from DCC-EX",
+                desc: "We can also import roster entries from our DCC-EX command station into the throttle's roster by pressing the Import Locos from DCC-EX button. This will open the DCC-EX Loco Roster control panel.",
+                image: "4.Address/ManageRoster10_sm.png",
+                x: 66.4,
+                y: 40.2
+            },
+            {
+                id: 76,
+                section: 4,
+                title: "DCC-EX Loco Import",
+                desc: "Here we can select which locomotives we want to import from our DCC-EX command station into the throttle's roster. The panel will show which roster entries match those that are already in our roster presets, and which are unknown (new). Note: This only works when we are connected to the command station, and only if we have added our roster information to DCC-EX, although we can try it out with the Emulator.",
+                image: "4.Address/ImportLocos_sm.png",
+                x: 33.5,
+                y: 35.8
+            },
+            {
+                id: 77,
+                section: 4,
+                title: "DCC-EX Roster Entry",
+                desc: "We can also press on one of the locomotive roster entries to see details about that locomotive.",
+                image: "4.Address/ImportLocos_sm.png",
+                x: 48.7,
+                y: 43.5
+            },
+            {
+                id: 78,
+                section: 4,
+                title: "DCC-EX Locomotive Details",
+                desc: "Here we will see all the locomotive's DCC functions according to our DCC-EX command station. If we would like to import the locomotive into the throttle's roster, click the 'Import Loco' button.",
+                image: "4.Address/Loco3Details_sm.png",
+                x: 50,
+                y: 15
+            },
+            {
+                id: 79,
+                section: 4,
+                title: "DCC-EX Import Confirmation",
+                desc: "This will place a checkmark next to the locomotive's entry in the DCC-EX Loco Roster control panel. We can also manually add or remove the checkmarks by clicking on the checkbox.",
+                image: "4.Address/ImportLoco3_sm.png",
+                x: 66.2,
+                y: 43.2
+            },
+            {
+                id: 80,
+                section: 4,
+                title: "DCC-EX Finalize Import",
+                desc: "Click 'Import Selected' to add the selected locomotive(s) to the throttle's roster, or click 'Cancel' to return to the Manage Roster control panel.",
+                image: "4.Address/ImportLoco3_sm.png",
+                x: 66.4,
+                y: 70.6
+            },
+            {
+                id: 81,
+                section: 4,
+                title: "Address Collision",
+                desc: "If we try to import a locomotive with the same DCC address as one of the other locomotives already in the throttle's roster, we will be asked if we want to replace the roster entry with information from DCC-EX, create a new roster entry, or cancel.",
+                image: "4.Address/LocoExistsCreate_sm.png",
+                x: 62.7,
+                y: 50.8
+            },
+            {
+                id: 82,
+                section: 4,
+                title: "Create New # Entry",
+                desc: "If we choose to create a new roster entry using the information from DCC-EX, the throttle will create a new entry for our locomotive with the next available 'hashtag' ID. By adding a hashtag (#) at the start of the roster ID for some of our locomotives, and adding a decimal point number at the end (#3.1, #3.2, etc.), we can have multiple locomotives in the throttle's roster with the same DCC address. Note: Because our locomotives will still have the same DCC address, we cannot control them independently. Any commands we send to one of the locomotives will be received by the others.",
+                image: "4.Address/LocoExistsCreate_sm.png",
+                x: 62.8,
+                y: 56.1
+            },
+            {
+                id: 83,
+                section: 4,
+                title: "DCC-EX Import Complete",
+                desc: "If we import roster entries from DCC-EX, and the first available empty roster slots are not currently visible in the throttle, we will see a message asking if we want to make additional presets visible. This is equivalent to pressing the + button in the header of the Loco Address Panel in the throttle, or adjusting the Visible Presets slider in the Manage Roster control panel, both of which we saw previously.",
+                image: "4.Address/ImportCompleteShow_sm.png",
+                x: 62.7,
+                y: 56
+            },
+            {
+                id: 84,
+                section: 4,
+                title: "Save Roster Changes",
+                desc: "Now we can save our roster changes. Note: Any locomotives we imported from DCC-EX will already be added to the roster so what we select here won't affect those.",
+                image: "4.Address/ManageRoster11_sm.png",
+                x: 33.7,
+                y: 73.2
+            },
+            {
+                id: 85,
+                section: 4,
+                title: "New Roster Entries",
+                desc: "Now we should see any locomotives we just imported from DCC-EX in the throttle's roster. We may have to scroll down to see them if there are already a number of roster entries in the throttle. Note: We can close the Sort & Configure Presets panel by clicking the red button in the upper left corner, or by scrolling to the bottom of the list of presets and pressing the 'Close Sort' button.",
+                image: "4.Address/SortPresetsHash_sm.png",
+                x: 34,
+                y: 64.1
+            },
+            {
+                id: 86,
+                section: 4,
+                title: "Loco Address Panel",
+                desc: "Depending on how we sorted our presets, we may also see our newly imported locomotive(s) in the locomotive presets in the Loco Address Panel.",
+                image: "4.Address/EditPreset3_sm.png",
+                x: 10.8,
+                y: 91.6
+            },
+            {
+                id: 87,
+                section: 4,
+                title: "Loco Hashtag Address",
+                desc: "We can also enter the ID for one of our new locomotives in the address box. If we imported a new locomotive with the same DCC address as one of the other locomotives in our roster, we can enter its hashtag (#) ID in the box. We can also manually enter hashtag (#) locomotive IDs directly into the presets if we like.",
+                image: "4.Address/EditPresetHash_sm.png",
+                x: 27.8,
+                y: 38.8
+            },
+            {
+                id: 88,
+                section: 4,
+                title: "Loco Address Panel",
+                desc: "Remember, even though this new locomotive has a hashtag (#) ID, it still has the same DCC address as one or more of the other locomotives in our roster, so we will want to pay attention to which other locomotives with that address are on the track, as they will all receive the same commands from the throttle.",
+                image: "4.Address/EditPreset3new_sm.png",
+                x: 24.6,
+                y: 39
+            },
+            {
+                id: 89,
+                section: 4,
+                title: "Introduction to Consists",
+                desc: "In addition to running single locomotives, we can run multiple locomotives together in consists.",
+                image: "4.Address/ConsistStart_sm.png",
+                x: 21.2,
+                y: 35
+            },
+            {
+                id: 90,
+                section: 4,
+                title: "Consist Setup",
+                desc: "Click the consist setup icon to open the consist setup and configuration controls.",
+                image: "4.Address/ConsistStart_sm.png",
+                x: 35.3,
+                y: 33.2
+            },
+            {
+                id: 91,
+                section: 4,
+                title: "Consist Presets",
+                desc: "We can configure up to nine different locomotive consists at a time.",
+                image: "4.Address/ConsistButtons_sm.png",
+                x: 21.2,
+                y: 35
+            },
+            {
+                id: 92,
+                section: 4,
+                title: "Select Consist",
+                desc: "Select one of the consist preset buttons to edit that consist. For this example we'll start with a clear, empty consist.",
+                image: "4.Address/ConsistButtons_sm.png",
+                x: 4.5,
+                y: 44.4
+            },
+            {
+                id: 93,
+                section: 4,
+                title: "Add Locomotives",
+                desc: "Add locomotives to the consist by selecting their locomotive preset buttons. The order in which we select the presets determines the order of our locomotives in the consist, with the first locomotive we select being at the front of the consist, and the others following behind. Note: Our locomotives must be in a visible preset to add them to a consist, but once in the consist we can hide the presets if we like.",
+                image: "4.Address/Consist3Locos_sm.png",
+                x: 40,
+                y: 83.1
+            },
+            {
+                id: 94,
+                section: 4,
+                title: "Consist Address Box",
+                desc: "The addresses of the locomotives in the consist will appear in the Loco Address box, which will show a 'Consist' indicator. The < or > direction indicator will indicate which way the lead locomotive is facing based on its settings in the Throttle Control Panel. The order of the locomotives in the Loco Address box is determined by the direction of the lead locomotive, so if the lead locomotive is facing left, then it will be on the left side of the address box, and if the lead locomotive is facing right, it will be on the right side. We'll learn how to set which direction the locomotive is facing later when we look at the Throttle Control Panel.",
+                image: "4.Address/Consist3Locos_sm.png",
+                x: 40,
+                y: 46.5
+            },
+            {
+                id: 95,
+                section: 4,
+                title: "Lead Locomotive Photo",
+                desc: "The lead locomotive's photo or image will appear in the photo box, with a stacked 'consist' icon in the upper left corner.",
+                image: "4.Address/Consist3Locos_sm.png",
+                x: 10.5,
+                y: 54.2
+            },
+            {
+                id: 96,
+                section: 4,
+                title: "Reverse Locomotives",
+                desc: "Press a locomotive's preset button again if that locomotive is facing in the opposite direction from the lead locomotive. The locomotive preset will show that locomotive going in reverse. We can toggle the direction of the locomotive by repeatedly pressing its preset button.",
+                image: "4.Address/ConsistRevLoco_sm.png",
+                x: 40,
+                y: 83.1
+            },
+            {
+                id: 97,
+                section: 4,
+                title: "Remove Locomotives",
+                desc: "Long-press on a locomotive's preset button to remove that locomotive from the consist.",
+                image: "4.Address/Consist2Locos_sm.png",
+                x: 27.3,
+                y: 83.1
+            },
+            {
+                id: 98,
+                section: 4,
+                title: "Reverse Consist Order",
+                desc: "We can reverse the order of the consist by pressing the 'Reverse Order' button. Note that this is different from running our locomotives in reverse. Reversing the order of the consist means that our trailing locomotive will now become our lead locomotive. This would be as if we had disconnected our consist of locomotives and run them around the train, or turned them on a Y.",
+                image: "4.Address/ConsistTurnButton_sm.png",
+                x: 36.4,
+                y: 39.8
+            },
+            {
+                id: 99,
+                section: 4,
+                title: "Consist Order Reversed",
+                desc: "When we reverse the order of a consist, the image in the photo box will change to our new lead locomotive.",
+                image: "4.Address/ConsistTurned_sm.png",
+                x: 21,
+                y: 50.4
+            },
+            {
+                id: 100,
+                section: 4,
+                title: "Consist Locos Reversed",
+                desc: "The direction indicator in the address box will also change sides, and if our lead locomotive is facing in a different direction from our trailing locomotive, all the locomotives will also change directions. We will see this reflected in the colors of the addresses in the address box, and each locomotive's preset button below.",
+                image: "4.Address/ConsistTurned_sm.png",
+                x: 12.4,
+                y: 50.4
+            },
+            {
+                id: 101,
+                section: 4,
+                title: "Consist Preset Reversed",
+                desc: "The consist's preset button will also show that the consist has been reversed. Again, this does not mean that the consist is running in reverse, but rather that it has been 'turned' or run around the train. Assuming that our lead locomotive and trailing locomotive are facing in opposite directions, then the icon in the middle of the consist preset button will show that the former trailing locomotive now leading the consist is traveling in the forward direction when the consist is turned.",
+                image: "4.Address/ConsistTurned_sm.png",
+                x: 4.5,
+                y: 44.5
+            },
+            {
+                id: 102,
+                section: 4,
+                title: "Change Consist Preset Order",
+                desc: "We can change the order of the consist presets by pressing the 'Move Up' and 'Move Down' buttons.",
+                image: "4.Address/ConsistDownSort_sm.png",
+                x: 33.9,
+                y: 39.8
+            },
+            {
+                id: 103,
+                section: 4,
+                title: "Clear Consist",
+                desc: "We can delete/clear a consist by pressing the 'Clear Consist' button.",
+                image: "4.Address/ConsistDownSort_sm.png",
+                x: 41.8,
+                y: 36.3
+            },
+            {
+                id: 104,
+                section: 4,
+                title: "Completing Consist Setup",
+                desc: "When we're done configuring our consists, we can press the Consist Setup button to close the configuration buttons and hide any empty, unused consists.",
+                image: "4.Address/ConsistSelected_sm.png",
+                x: 41.7,
+                y: 33.2
+            },
+            {
+                id: 105,
+                section: 4,
+                title: "Active Consist Mode",
+                desc: "We can now run our consist just like any other locomotive by selecting its preset.",
+                image: "4.Address/ConsistSelected_sm.png",
+                x: 8.7,
+                y: 43.6
+            },
+            {
+                id: 106,
+                section: 4,
+                title: "Turn Consist",
+                desc: "Press the consist preset button again to 'turn' or reverse the order of our consist. This is identical to pressing the 'Reverse Order' button when in consist setup mode.",
+                image: "4.Address/ConsistTurned2_sm.png",
+                x: 8.7,
+                y: 43.6
+            },
+            {
+                id: 107,
+                section: 4,
+                title: "Hide All Consists & Exit",
+                desc: "When we are done running consists, or simply want to hide the consist presets, press the 'Hide all Consists' button.",
+                image: "4.Address/ConsistSelected_sm.png",
+                x: 32.8,
+                y: 33.2
+            },
+            {
+                id: 108,
+                section: 4,
+                title: "Active Consist Still Active",
+                desc: "Even after we hide the consist presets, if we were running a consist it will still be active in the throttle, and the locomotive addresses will be displayed in the address box and the locomotive presets.",
+                image: "4.Address/ConsistHidden_sm.png",
+                x: 8.9,
+                y: 38.5
+            },
+            {
+                id: 109,
+                section: 4,
+                title: "Type Locomotive Address",
+                desc: "To run a new locomotive, we can click in the address box and type its address.",
+                image: "4.Address/Consist1234_sm.png",
+                x: 15,
+                y: 38.5
+            },
+            {
+                id: 110,
+                section: 4,
+                title: "Run Preset",
+                desc: "Or we can run one of our locomotives by selecting its preset.",
+                image: "4.Address/ConsistStart_sm.png",
+                x: 15,
+                y: 74.6
+            },
+            {
+                id: 111,
+                section: 4,
+                title: "Consist Warning",
+                desc: "If we select a preset for a locomotive that is part of a consist, and the consist is moving at any speed other than 0, the throttle will display a warning that trying to control that locomotive individually could cause unexpected behavior or derailments.",
+                image: "4.Address/ConsistWarning1_sm.png",
+                x: 50,
+                y: 29.5
+            },
+            {
+                id: 112,
+                section: 4,
+                title: "Locomotive(s) Already in Motion",
+                desc: "Additional messages will warn us when we try to select a consist that includes a locomotive that is already in motion, either by itself or as part of another consist.",
+                image: "4.Address/ConsistWarning2_sm.png",
+                x: 50,
+                y: 25.5
+            },
+            {
+                id: 113,
+                section: 4,
+                title: "Small Screen Controls",
+                desc: "There is one more set of 'hidden' small-screen controls we can access by long-pressing the 'Compact Presets' button.",
+                image: "4.Address/ScreensStart_sm.png",
+                x: 21.7,
+                y: 33.2
+            },
+            {
+                id: 114,
+                section: 4,
+                title: "Small Screen Navigation",
+                desc: "These hidden controls - the Merge Address Box, Hide Header Cards, and Lock Scroll buttons - are useful when operating the throttle on a small touchscreen, such as a smart phone or tablet.",
+                image: "4.Address/ScreensIcons_sm.png",
+                x: 29.8,
+                y: 33.2
+            },
+            {
+                id: 115,
+                section: 4,
+                title: "Merge Address Box",
+                desc: "The 'Merge Address Box' button will merge the locomotive address box over the top of the locomotive photo or image to save space. All the functions and controls in the address box, including manually entering a locomotive's address into the box, and using the double-chevrons to scroll through the locomotive presets, are unchanged.",
+                image: "4.Address/ScreensAddress_sm.png",
+                x: 29.8,
+                y: 33.2
+            },
+            {
+                id: 116,
+                section: 4,
+                title: "Lock Scroll",
+                desc: "The 'Lock Scroll' button will lock the display on our touchscreen device, such as our smart phone or tablet, so that we can more easily interact with the throttle's sliders and buttons without the throttle moving around on the screen as we drag our finger. Press the button again to unlock the scroll.",
+                image: "4.Address/ScreensLock_sm.png",
+                x: 29.8,
+                y: 33.2
+            },
+            {
+                id: 117,
+                section: 4,
+                title: "Hide Header Cards",
+                desc: "The 'Hide Header Cards' button will hide the Header Panel on the first press, and then hide both the Header Panel and the Track Power Panel and also lock the scroll on the second press.",
+                image: "4.Address/ScreensHide1_sm.png",
+                x: 29.8,
+                y: 20.6
+            },
+            {
+                id: 118,
+                section: 4,
+                title: "Throttle Collapsed",
+                desc: "This will collapse the throttle to its essential controls for selecting locomotives, controlling locomotive speed and direction, and activating locomotive DCC decoder functions.",
+                image: "4.Address/ScreensHide2_sm.png",
+                x: 29.8,
+                y: 6.9
+            },
+            {
+                id: 119,
+                section: 4,
+                title: "Compact Footprint",
+                desc: "By using additional controls in the Loco Address, Throttle Control, and Loco Functions control panels, we can shrink the throttle to a very small footprint for our smart phone or tablet, while still having all its features available at our fingertips.",
+                image: "4.Address/ScreensCollapse_sm.png",
+                x: 66.3,
+                y: 6.9
+            },
+            {
+                id: 120,
+                section: 4,
+                title: "Show Header Cards",
+                desc: "Press the 'Hide Header Cards' button again to show the Header and Track Power control panels and unlock the display scroll. Long-press the 'Compact Presets' button again to hide the 'hidden' controls.",
+                image: "4.Address/ScreensCollapse_sm.png",
+                x: 29.8,
+                y: 6.9
+            },
+            {
+                id: 121,
+                section: 4,
+                title: "Emergency Recovery",
+                desc: "In some cases, the 'Hide Header Cards' and 'Lock Scroll' buttons may move off the visible portion of the screen when activated. If that happens, we can long-press on the Emergency Stop button for three seconds to show the hidden controls and unlock the screen.",
+                image: "4.Address/ScreensCollapse_sm.png",
+                x: 44.2,
+                y: 24.8
+            },
+            {
+                id: 122,
+                section: 4,
+                title: "Loco Address Summary",
+                desc: "We have now explored all the features and controls in the Loco Address Panel of the Driver-D Throttle for DCC-EX. We learned how to configure our locomotive presets, manage our roster and import locomotives from DCC-EX, set up and run locomotives in consists, and minimize our throttle to run on a smart phone or tablet. Now let's look at how to control our locomotives' speed and direction.",
+                image: "4.Address/ScreensDone_sm.png",
+                x: 41.8,
+                y: 30.5
+            },
+            // ========== SECTION 5: THROTTLE CONTROL PANEL ==========
+            {
+                id: 123,
+                section: 5,
+                title: "Throttle Control Panel",
+                desc: "Let's take a look at the Throttle Control Panel next. As with the other control panels, the Throttle Control Panel is divided into several different sections.",
+                image: "5.Throttle/ThrottleStart_sm.png",
+                x: 70.5,
+                y: 16.5
+            },
+            {
+                id: 124,
+                section: 5,
+                title: "Active Connection Required",
+                desc: "Note that most of the features of the Throttle Control Panel are only active when the throttle is connected to our DCC-EX command station or the Emulator, and the track power is on.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 40,
+                y: 24.5
+            },
+            {
+                id: 125,
+                section: 5,
+                title: "Menus & Configuration",
+                desc: "At the top of the Throttle Control Panel are the settings and configuration menus. We'll come back to these in a moment.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 61.7,
+                y: 16.9
+            },
+            {
+                id: 126,
+                section: 5,
+                title: "Speed Indicator",
+                desc: "Next is the throttle speed indicator, showing the currently selected locomotive or consist speed in speed steps.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 42.2,
+                y: 21.7
+            },
+            {
+                id: 127,
+                section: 5,
+                title: "Forward & Reverse",
+                desc: "To the right of the speed indicator are the Forward and Reverse buttons, which allow us to change the direction of our locomotives. Note that several items in the throttle change color based on the direction our selected locomotive or consist is travelling, including the different speed displays, and the locomotive and consist addresses and presets.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 88,
+                y: 19.3
+            },
+            {
+                id: 128,
+                section: 5,
+                title: "Direction Keyboard Shortcut",
+                desc: "KEYBOARD SHORTCUT: Note that in addition to pressing the Forward and Reverse buttons, if we are using the throttle on a device that has a keyboard, we can use the up and down arrow keys to change the direction of our locomotive(s).",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 69.6,
+                y: 21.5
+            },
+            {
+                id: 129,
+                section: 5,
+                title: "Throttle Speed Slider",
+                desc: "Below the speed indicator and direction buttons is the throttle speed slider, with + and - buttons at either end. We can drag the slider indicator with our mouse (or finger on a touchscreen device) to change the speed.",
+                image: "5.Throttle/ThrottleSpeed10_sm.png",
+                x: 57.6,
+                y: 27.9
+            },
+            {
+                id: 130,
+                section: 5,
+                title: "Plus (+) & Minus (-) Buttons",
+                desc: "The + and - buttons allow us to increase or decrease the speed by a set amount. The default is 5 speed steps, but we'll look at how to change that in a moment.",
+                image: "5.Throttle/ThrottleSpeed10_sm.png",
+                x: 43,
+                y: 27.9
+            },
+            {
+                id: 131,
+                section: 5,
+                title: "Speed Keyboard Shortcuts",
+                desc: "KEYBOARD SHORTCUT: The + and - keys, and the right and left arrow keys on the keyboard also have the same function.",
+                image: "5.Throttle/ThrottleSpeed10_sm.png",
+                x: 69.9,
+                y: 19.6
+            },
+            {
+                id: 132,
+                section: 5,
+                title: "Mouse Wheel Control",
+                desc: "MOUSE CONTROL: If we are using the throttle on a device that has a mouse, then whenever the mouse pointer is within the Throttle Control panel, the mouse pointer will change to a green speedometer icon. When this happens we can also use our mouse scroll wheel to change the speed by the set increments.",
+                image: "5.Throttle/ThrottleMouse_sm.png",
+                x: 64.8,
+                y: 24.6
+            },
+            {
+                id: 133,
+                section: 5,
+                title: "Speed Presets",
+                desc: "Below the throttle speed slider are a number of speed preset buttons, including a Stop button. The Stop button is the equivalent of setting the speed to 0. As with many elements in the throttle, the color of the buttons will vary depending on whether the selected locomotive is going in the forward or reverse direction.",
+                image: "5.Throttle/ThrottleSpeed25_sm.png",
+                x: 42.7,
+                y: 38
+            },
+            {
+                id: 134,
+                section: 5,
+                title: "Stop Keyboard Shortcut",
+                desc: "KEYBOARD SHORTCUT: The keyboard spacebar will also function as a 'Stop' command.",
+                image: "5.Throttle/ThrottleSpeed25_sm.png",
+                x: 69.9,
+                y: 19.8
+            },
+            {
+                id: 135,
+                section: 5,
+                title: "Emergency Stop",
+                desc: "Finally, at the bottom of the Throttle Control Panel is the Emergency Stop button. This will send DCC-EX the command to immediately stop all locomotives on the layout.  NOTE: As we discussed in the previous section, long-pressing the Emergency Stop button for 3 seconds will also show the Header and Track Power control panels if we have previously hidden them.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 42.2,
+                y: 46.9
+            },
+            {
+                id: 136,
+                section: 5,
+                title: "E-Stop Keyboard Shortcuts",
+                desc: "KEYBOARD SHORTCUT: The Escape (ESC) key and the forward-slash key (/) will also perform an Emergency Stop.",
+                image: "5.Throttle/ThrottlePower_sm.png",
+                x: 72.8,
+                y: 21.5
+            },
+            {
+                id: 137,
+                section: 5,
+                title: "Compact Throttle",
+                desc: "There are a number of different ways that we can customize the Throttle Control Panel. The 'Compact Throttle' button will hide the speed presets to save space.",
+                image: "5.Throttle/ThrottlePower2_sm.png",
+                x: 63.4,
+                y: 16.8
+            },
+            {
+                id: 138,
+                section: 5,
+                title: "Hidden Speed Presets",
+                desc: "Note that when the speed presets are hidden, the 'Stop' label on the speed slider becomes a functional 'Stop' button.",
+                image: "5.Throttle/ThrottleCollapse_sm.png",
+                x: 54.7,
+                y: 30.7
+            },
+            {
+                id: 139,
+                section: 5,
+                title: "Throttle Settings",
+                desc: "The rest of the configuration settings are available by pressing the 'Throttle Settings' gear icon.",
+                image: "5.Throttle/ThrottlePower2_sm.png",
+                x: 59.6,
+                y: 16.8
+            },
+            {
+                id: 140,
+                section: 5,
+                title: "Control Settings",
+                desc: "We'll start with some settings that affect how we control our locomotives.",
+                image: "5.Throttle/ThrottleEdit_sm.png",
+                x: 69.8,
+                y: 35
+            },
+            {
+                id: 141,
+                section: 5,
+                title: "Throttle Mode",
+                desc: "The 'Throttle Mode' setting allows us to switch from a standard throttle with speeds from 0 to 126 speed steps, and Forward and Reverse buttons, to a switching-shunting throttle with speeds from -126 speed steps Reverse to +126 speed steps Forward, with Stop in the middle.",
+                image: "5.Throttle/ThrottleSwitching_sm.png",
+                x: 77.6,
+                y: 28.9
+            },
+            {
+                id: 142,
+                section: 5,
+                title: "Switching Throttle",
+                desc: "When we select the 'Switching' throttle, the forward and reverse buttons will disappear, and the throttle slider will adjust to show Max Reverse (REV) at one end, and Max Forward (FWD) at the other, with Stop in the middle. The large speed indicator near the top of the control panel will also show the direction FWD or REV along with the speed.",
+                image: "5.Throttle/ThrottleSwitching_sm.png",
+                x: 69.8,
+                y: 43.4
+            },
+            {
+                id: 143,
+                section: 5,
+                title: "Locomotive Orientation",
+                desc: "The Forward Left (FWD Left) and Forward Right (FWD Right) buttons allow us to specify which direction our locomotive or consist is facing on the track. Note: This setting is for visual convenience only, and does not affect the commands sent to our DCC-EX command station.",
+                image: "5.Throttle/ThrottleFwdL_sm.png",
+                x: 77.6,
+                y: 33.3
+            },
+            {
+                id: 144,
+                section: 5,
+                title: "Orientation Effects",
+                desc: "The direction that we choose to be forward will also determine the arrangement of the 'Forward' and 'Reverse' buttons, which end of the throttle slider is MIN and which end is MAX, which way the < or > direction indicator is pointing in the loco address box, and the orientation of our consist in the address box.",
+                image: "5.Throttle/ThrottleFwdL_sm.png",
+                x: 74,
+                y: 23.2
+            },
+            {
+                id: 145,
+                section: 5,
+                title: "Loco-Specific Settings",
+                desc: "Note that both the Throttle Mode setting and the Orientation setting are specific to individual locomotives, and the throttle stores these settings with its locomotive roster. That means that for each locomotive, we can choose which direction it is facing, and whether to use a standard or switching throttle with that locomotive. All the other configuration settings in the Throttle Control Panel are universal and apply regardless of what locomotive we are running.",
+                image: "5.Throttle/ThrottleFwdL_sm.png",
+                x: 56.5,
+                y: 31.2
+            },
+            {
+                id: 146,
+                section: 5,
+                title: "Scale Speed Steps or %",
+                desc: "The Scale Speed Steps or % buttons allow us to choose whether to show our locomotive speeds in speed steps from 1-126, or as a percentage from 1-100. Note: This setting is for visual convenience only, and does not affect how the throttle communicates speed information to our DCC-EX command station.",
+                image: "5.Throttle/ThrottleScale_sm.png",
+                x: 77.6,
+                y: 37.8
+            },
+            {
+                id: 147,
+                section: 5,
+                title: "Speed Presets Scale Update",
+                desc: "In addition to the large locomotive speed indicator, the values on our speed preset buttons will update based on our scale speed setting.",
+                image: "5.Throttle/ThrottleScale_sm.png",
+                x: 69.7,
+                y: 57.1
+            },
+            {
+                id: 148,
+                section: 5,
+                title: "Speed Step Increment",
+                desc: "The Speed Step Increment buttons allow us to choose the amount the indicated speed will increase or decrease when we press the + or - buttons next to the throttle speed slider. Note that this also applies to the keyboard shortcuts and the mouse scroll wheel.",
+                image: "5.Throttle/ThrottleIncrement_sm.png",
+                x: 82.2,
+                y: 42
+            },
+            {
+                id: 149,
+                section: 5,
+                title: "Setting Speed Step Increment",
+                desc: "I always set the speed step increment to 1 because I prefer fine control over my locomotive speeds, but we can choose any value we like.",
+                image: "5.Throttle/ThrottleIncrement_sm.png",
+                x: 89.9,
+                y: 45.1
+            },
+            {
+                id: 150,
+                section: 5,
+                title: "Throttle Layout Controls",
+                desc: "Now let's look at some controls that we can use to customize the layout of the Throttle Control Panel.",
+                image: "5.Throttle/ThrottleEdit_sm.png",
+                x: 66.9,
+                y: 16.2
+            },
+            {
+                id: 151,
+                section: 5,
+                title: "Emergency Stop Layout",
+                desc: "The red 'Cycle Emergency Stop Layout' button lets us split the Emergency Stop button into two separate buttons: an 'Emergency Stop' button, and a regular 'Stop' button. This can provide us with a convenient Stop button when the speed presets are hidden.",
+                image: "5.Throttle/ThrottleEStop_sm.png",
+                x: 65.4,
+                y: 16.2
+            },
+            {
+                id: 152,
+                section: 5,
+                title: "Cycle Emergency Stop",
+                desc: "Press the button repeatedly to cycle through the seven options.",
+                image: "5.Throttle/ThrottleEStop2_sm.png",
+                x: 65.4,
+                y: 16.2
+            },
+            {
+                id: 153,
+                section: 5,
+                title: "Customize Stop Label",
+                desc: "The blue 'Stop is Label' / 'Stop is Button' button lets us turn the 'Stop' label on the throttle slider into a fully functional 'Stop' button at all times, not just when the speed presets are hidden by the 'Compact Throttle' button.",
+                image: "5.Throttle/ThrottleStop_sm.png",
+                x: 68.4,
+                y: 16.2
+            },
+            {
+                id: 154,
+                section: 5,
+                title: "Customize Small Presets",
+                desc: "The green 'Small Presets' button lets us replace the 'Stop' preset button with three small presets for throttle speeds 1, 5, and 10. This will provide us with handy presets for slow speed switching, and by using the 'Stop is Button' feature, or by cycling the Emergency Stop button layout, we can also be sure that we have a 'Stop' button at our fingertips at all times.",
+                image: "5.Throttle/ThrottleButtons_sm.png",
+                x: 71.4,
+                y: 16.2
+            },
+            {
+                id: 155,
+                section: 5,
+                title: "Customize Thick Slider",
+                desc: "And the orange 'Thick Slider' button lets us replace the small round slider thumb with a thick bar. This can make it easier to 'grab' the slider on a touch screen display.",
+                image: "5.Throttle/ThrottleThick_sm.png",
+                x: 74.3,
+                y: 16.2
+            },
+            {
+                id: 156,
+                section: 5,
+                title: "Vertical Layout",
+                desc: "Finally, the 'Vertical Layout' button allows us to switch from a Throttle Control Panel with a horizontal slider, to one of two options with a vertical slider.",
+                image: "5.Throttle/ThrottleVertR_sm.png",
+                x: 62.4,
+                y: 16.2
+            },
+            {
+                id: 157,
+                section: 5,
+                title: "Cycle Vertical Layout",
+                desc: "Press the 'Vertical Layout' button to cycle through options for a vertical throttle slider on the left or on the right.",
+                image: "5.Throttle/ThrottleVertL_sm.png",
+                x: 77,
+                y: 16.2
+            },
+            {
+                id: 158,
+                section: 5,
+                title: "Vertical Layout Uses",
+                desc: "The vertical throttle layout can be useful when we want the slider near the edge of our handheld touchscreen device, such as a tablet.",
+                image: "5.Throttle/ThrottleVertUses_sm.png",
+                x: 95.5,
+                y: 34.5
+            },
+            {
+                id: 159,
+                section: 5,
+                title: "Vertical Layout Options",
+                desc: "Note that all the other options and controls are still available when using a vertical throttle layout, including the switching slider, locomotive orientation, speed scale, speed step increment, custom emergency stop / stop buttons, stop label as a button, small speed presets, and thick throttle slider.",
+                image: "5.Throttle/ThrottleVertOptions_sm.png",
+                x: 95.5,
+                y: 34.5
+            },
+            {
+                id: 160,
+                section: 5,
+                title: "Throttle Panel Conclusion",
+                desc: "We have now looked at all the controls and features of the Throttle Control Panel. All aboard!",
+                image: "5.Throttle/ThrottleDone_sm.png",
+                x: 42.4,
+                y: 17
+            },
+            // ========== SECTION 6: LOCO FUNCTIONS PANEL ==========
+            {
+                id: 161,
+                section: 6,
+                title: "Loco Functions Panel",
+                desc: "Now let's look at the Loco Functions Panel. In addition to using this panel to select and configure our locomotive's DCC decoder functions, we can also use it to control the Routes and Turnouts configured in our DCC-EX command station.",
+                image: "6.Functions/FunctionsStart_sm.png",
+                x: 70.5,
+                y: 52.9
+            },
+            {
+                id: 162,
+                section: 6,
+                title: "Active Connection Required",
+                desc: "As with the Throttle Control Panel, many of the functions in the Loco Functions Panel are only active when the throttle is connected to our DCC-EX command station or the Emulator, and the track power is on.",
+                image: "6.Functions/FunctionsStart_sm.png",
+                x: 41.1,
+                y: 24.6
+            },
+            {
+                id: 163,
+                section: 6,
+                title: "Locomotive Function Buttons",
+                desc: "Each button in the panel activates one of our locomotive's DCC decoder functions. Some of the buttons, such as the horn button (F2) are momentary buttons that only stay active while we press them.",
+                image: "6.Functions/FunctionsStart_sm.png",
+                x: 70.5,
+                y: 66.7
+            },
+            {
+                id: 164,
+                section: 6,
+                title: "Keyboard Shortcuts",
+                desc: "KEYBOARD SHORTCUT: We can also control all the locomotive functions using keyboard shortcuts.",
+                image: "6.Functions/FunctionsStart_sm.png",
+                x: 70.5,
+                y: 70.5
+            },
+            {
+                id: 165,
+                section: 6,
+                title: "Additional Shortcuts",
+                desc: "KEYBOARD SHORTCUT: The keys 0-9 control functions F0-F9. The keys 0-9 along with the 'Shift' key control functions F10-F19. And finally, the keys 0-8 along with the 'Option' or 'Alt' key control functions F20-F28.",
+                image: "6.Functions/FunctionsStart_sm.png",
+                x: 70.5,
+                y: 74.5
+            },
+            {
+                id: 166,
+                section: 6,
+                title: "Compact Functions",
+                desc: "Similar to the other control panels, the 'Compact Functions' button will reduce the function buttons to half their height to save space on smaller displays.",
+                image: "6.Functions/FunctionsCompact_sm.png",
+                x: 60.9,
+                y: 52.5
+            },
+            {
+                id: 167,
+                section: 6,
+                title: "Configure Functions",
+                desc: "To configure the DCC decoder functions for our locomotives, as well as how they are displayed in the Loco Functions Panel, click the 'Edit Functions' button.",
+                image: "6.Functions/FunctionsConfigUp_sm.png",
+                x: 57.3,
+                y: 52.5
+            },
+            {
+                id: 168,
+                section: 6,
+                title: "Edit Locomotive Functions",
+                desc: "Here we can edit the details for all the DCC functions from F0 to F28 for each of our locomotives. This function information is specific to each locomotive, and stored in the throttle's locomotive roster.",
+                image: "6.Functions/FunctionsConfigDownScroll_sm.png",
+                x: 41.8,
+                y: 75.5
+            },
+            {
+                id: 169,
+                section: 6,
+                title: "Function Options",
+                desc: "In addition to giving each function a name, we can click on checkboxes to specify certain behaviors for each function. These include whether to show the function's button or hide it in the throttle, whether the function should be active for that locomotive when it is in a consist but not in the lead, whether the function is momentary or latching, and whether the function should cycle on and off repeatedly while the button is pressed if we hold it down for more than half a second.",
+                image: "6.Functions/FunctionsConfigDown_sm.png",
+                x: 72.2,
+                y: 56.5
+            },
+            {
+                id: 170,
+                section: 6,
+                title: "Copy Function Settings",
+                desc: "We can also copy all our function button settings from any other locomotive in the throttle's roster. We just select the locomotive we want to copy the settings from and press the 'Copy' button.",
+                image: "6.Functions/FunctionsCopy_sm.png",
+                x: 42.3,
+                y: 53.5
+            },
+            {
+                id: 171,
+                section: 6,
+                title: "Configure Function Colors",
+                desc: "Just like with the locomotive preset buttons, we can assign colors to each of our locomotive's function buttons. Assigning colors to the function buttons can help us quickly identify similar functions, such as those related to lighting features, sounds, or speed and braking functions.",
+                image: "6.Functions/FunctionsCopy_sm.png",
+                x: 62.8,
+                y: 60.1
+            },
+            {
+                id: 172,
+                section: 6,
+                title: "Function Color Options",
+                desc: "Just as before, we can select a color and opacity for both the button color and its accent. While the accent stripe for the locomotive preset buttons runs along the bottom, the accent stripe for the function buttons runs along the righthand side.",
+                image: "6.Functions/FunctionsPalette_sm.png",
+                x: 63,
+                y: 15.8
+            },
+            {
+                id: 173,
+                section: 6,
+                title: "Show Function Colors",
+                desc: "To show the function button colors we assigned in the throttle, click the 'Show Function Colors' button.",
+                image: "6.Functions/FunctionsColors_sm.png",
+                x: 60.5,
+                y: 44
+            },
+            {
+                id: 174,
+                section: 6,
+                title: "Function Button Colors",
+                desc: "The locomotive function buttons that we assigned colors to will now appear in those colors in the throttle.",
+                image: "6.Functions/FunctionsButtonsColor_sm.png",
+                x: 70.5,
+                y: 56.5
+            },
+            {
+                id: 175,
+                section: 6,
+                title: "Hide Function Numbers",
+                desc: "We can also decide whether to show the 'F' function number along with the function name in the functions buttons.",
+                image: "6.Functions/FunctionsFNum_sm.png",
+                x: 63.3,
+                y: 44
+            },
+            {
+                id: 176,
+                section: 6,
+                title: "Function Names Only",
+                desc: "Now only the locomotive function names will appear in the buttons. If we have not assigned a name to a button, the button will be blank.",
+                image: "6.Functions/FunctionsButtonsNoF_sm.png",
+                x: 70.5,
+                y: 56.5
+            },
+            {
+                id: 177,
+                section: 6,
+                title: "Hide Function Names",
+                desc: "Likewise we can decide whether to show the function names we assigned in the functions buttons.",
+                image: "6.Functions/FunctionsNames_sm.png",
+                x: 66.1,
+                y: 44
+            },
+            {
+                id: 178,
+                section: 6,
+                title: "Function Numbers Only",
+                desc: "Now only the locomotive function numbers will appear in the buttons, even if we have assigned them names.",
+                image: "6.Functions/FunctionsButtonsNoNames_sm.png",
+                x: 70.5,
+                y: 56.5
+            },
+            {
+                id: 179,
+                section: 6,
+                title: "Function Groups Setup",
+                desc: "Finally, we can assign each of our locomotive functions to groups, and use a button to quickly cycle through the groups of functions that we want to use for our locomotive. This can help us keep just the functions we need ready at our fingertips, while holding the rest easily accessible in reserve.",
+                image: "6.Functions/FunctionsGroup_sm.png",
+                x: 68.8,
+                y: 44
+            },
+            {
+                id: 180,
+                section: 6,
+                title: "Eight Function Groups",
+                desc: "There are eight different function groups that we can use.",
+                image: "6.Functions/FunctionsGroupsSetup_sm.png",
+                x: 50,
+                y: 7.3
+            },
+            {
+                id: 181,
+                section: 6,
+                title: "Pre-configured Groups",
+                desc: "First there are two pre-configured groups: one that includes all the DCC decoder functions from F0 to F28, and one that includes just the functions for which we checked the 'Show' box in the Edit Functions control panel. This second group is the 'Default' group and is always included as an option.",
+                image: "6.Functions/FunctionsGroupsSetup_sm.png",
+                x: 18.5,
+                y: 15.5
+            },
+            {
+                id: 182,
+                section: 6,
+                title: "Defined Function Groups",
+                desc: "Next there are six custom groups that we can assign functions to. The first three groups come pre-defined for basic decoder functions, such as lighting, sound, and motor and braking controls, but we can assign any locomotive functions we want to them. The names are just suggestions.",
+                image: "6.Functions/FunctionsGroupsSetup_sm.png",
+                x: 42.8,
+                y: 15.5
+            },
+            {
+                id: 183,
+                section: 6,
+                title: "User Custom Groups",
+                desc: "Next there are three user custom groups that we can name however we like. Click on the 'User #' label to give that group a name.",
+                image: "6.Functions/FunctionsGroupsSetup_sm.png",
+                x: 75,
+                y: 15.5
+            },
+            {
+                id: 184,
+                section: 6,
+                title: "Function Assignments",
+                desc: "Now we can assign our DCC decoder functions to any of our function groups. We can assign each function to as many groups as we like.",
+                image: "6.Functions/FunctionsGroupsSetup_sm.png",
+                x: 47.8,
+                y: 35.9
+            },
+            {
+                id: 185,
+                section: 6,
+                title: "Include Function Groups",
+                desc: "Next we click 'Include' for any function groups we want to include in the Loco Functions Panel in the throttle.",
+                image: "6.Functions/FunctionsGroups1_sm.png",
+                x: 64,
+                y: 27.2
+            },
+            {
+                id: 186,
+                section: 6,
+                title: "Enable Use Function Groups",
+                desc: "Finally, we'll make sure that the 'Use Function Groups' slider is toggled on.",
+                image: "6.Functions/FunctionsGroups2_sm.png",
+                x: 57.8,
+                y: 8.3
+            },
+            {
+                id: 187,
+                section: 6,
+                title: "Return to Loco Functions",
+                desc: "Then we can click the 'Done' button or the 'X' in the upper-right corner of the control panel, and return to the Loco Functions Panel.",
+                image: "6.Functions/FunctionsGroups2_sm.png",
+                x: 88.3,
+                y: 8.3
+            },
+            {
+                id: 188,
+                section: 6,
+                title: "Close Configuration",
+                desc: "Now we can close the locomotive functions configuration panel by clicking the 'Edit Functions' button with the gear icon again.",
+                image: "6.Functions/FunctionsButtonsGroups_sm.png",
+                x: 57.3,
+                y: 44
+            },
+            {
+                id: 189,
+                section: 6,
+                title: "Cycle Function Groups",
+                desc: "When we return to the Loco Functions Panel we will see that the 'Cycle Function Groups' button is active with the Default group, and the default locomotive function buttons we selected are shown in the panel below.",
+                image: "6.Functions/FunctionsGroupDefault_sm.png",
+                x: 65.9,
+                y: 52.4
+            },
+            {
+                id: 190,
+                section: 6,
+                title: "Lighting Group",
+                desc: "We can click the 'Cycle Function Groups' button to cycle through the function groups we just configured for our locomotive.",
+                image: "6.Functions/FunctionsGroupLights_sm.png",
+                x: 65.9,
+                y: 52.4
+            },
+            {
+                id: 191,
+                section: 6,
+                title: "Turnouts and Routes",
+                desc: "In addition to controlling our locomotive functions in the Loco Functions Panel, we can also operate our turnouts and routes here.",
+                image: "6.Functions/FunctionsGroupBasic_sm.png",
+                x: 91.2,
+                y: 52.4
+            },
+            {
+                id: 192,
+                section: 6,
+                title: "Routes & Automations",
+                desc: "The 'Routes & Automations' button will open the Routes & Automations control panel.",
+                image: "6.Functions/FunctionsRoutes_sm.png",
+                x: 92.8,
+                y: 52.4
+            },
+            {
+                id: 193,
+                section: 6,
+                title: "Routes & Automations Control Panel",
+                desc: "Here we will see all the routes and automations configured in our DCC-EX command station. The automations will be listed above, and the routes below. Press any of the buttons to set a route, or trigger an automation and dispatch a locomotive.",
+                image: "6.Functions/FunctionsRoutes_sm.png",
+                x: 42.5,
+                y: 66.8
+            },
+            {
+                id: 194,
+                section: 6,
+                title: "Refresh Routes",
+                desc: "Press the 'Refresh Routes' button to update the list from the command station.",
+                image: "6.Functions/FunctionsRoutes_sm.png",
+                x: 86.4,
+                y: 52.3
+            },
+            {
+                id: 195,
+                section: 6,
+                title: "Turnouts",
+                desc: "The 'Turnouts' button will open the Turnouts control panel.",
+                image: "6.Functions/FunctionsTurnoutsOff_sm.png",
+                x: 89.6,
+                y: 52.4
+            },
+            {
+                id: 196,
+                section: 6,
+                title: "Turnouts Control Panel",
+                desc: "Here we will see all the turnouts configured in our DCC-EX command station. Press one of the turnout buttons to throw (open) or line (close) the turnout / switch / points. Use the 'Refresh' button just like we did for the routes and automations.",
+                image: "6.Functions/FunctionsTurnoutsOn1_sm.png",
+                x: 42,
+                y: 62.1
+            },
+            {
+                id: 197,
+                section: 6,
+                title: "Loco Functions Wrap-up",
+                desc: "We have now looked at how to configure the Loco Functions Panel to control our locomotive DCC decoder functions, as well as operate all our turnouts and routes.",
+                image: "6.Functions/FunctionsEnd_sm.png",
+                x: 42.4,
+                y: 53.2
+            },
+            // ========== SECTION 7: USER CUSTOM SETTINGS ==========
+            {
+                id: 198,
+                section: 7,
+                title: "User Custom Settings",
+                desc: "As we have seen, the Driver-D Throttle for DCC-EX offers us many different settings that we can customize and configure to determine how we use the throttle to control our trains. To help us keep track of all these settings in one place, and save them for future recall, we can access the User Custom Settings control panel.",
+                image: "7.Settings/SettingsStart_sm.png",
+                x: 50,
+                y: 9.3
+            },
+            {
+                id: 199,
+                section: 7,
+                title: "Open Display Settings",
+                desc: "To access the User Custom Settings control panel, first open the 'Display Settings' panel.",
+                image: "7.Settings/SettingsStart_sm.png",
+                x: 77.6,
+                y: 3.5
+            },
+            {
+                id: 200,
+                section: 7,
+                title: "Open User Custom Settings",
+                desc: "Then press the 'User Custom Settings' button.",
+                image: "7.Settings/SettingsDisplaySettings_sm.png",
+                x: 55.5,
+                y: 48
+            },
+            {
+                id: 201,
+                section: 7,
+                title: "User Custom Settings Panel",
+                desc: "Here we can see all our custom settings in one place.",
+                image: "7.Settings/SettingsModal_sm.png",
+                x: 50,
+                y: 4
+            },
+            {
+                id: 202,
+                section: 7,
+                title: "Turn Off All Custom Settings",
+                desc: "At the top of the control panel is a button to quickly turn off all the user custom settings.",
+                image: "7.Settings/SettingsModal_sm.png",
+                x: 29.5,
+                y: 12.8
+            },
+            {
+                id: 203,
+                section: 7,
+                title: "Save Settings",
+                desc: "When we turn off all the custom settings, the app will prompt us to save our current settings in one of the eight user settings memory presets. We can give the saved settings a name if we like. For example, if we've configured a group of settings specifically for use on our tablet, we might want to call these our 'Tablet Settings'.",
+                image: "7.Settings/SettingsModalTablet_sm.png",
+                x: 36.9,
+                y: 54.4
+            },
+            {
+                id: 204,
+                section: 7,
+                title: "Memory Presets",
+                desc: "There are eight memory preset buttons that we can use to save and restore our user custom settings.",
+                image: "7.Settings/SettingsModalSaved4_sm.png",
+                x: 28,
+                y: 19.6
+            },
+            {
+                id: 205,
+                section: 7,
+                title: "Restore Custom Settings",
+                desc: "To restore our saved user custom settings, click on the memory preset button.",
+                image: "7.Settings/SettingsModalRecall4_sm.png",
+                x: 47,
+                y: 17
+            },
+            {
+                id: 206,
+                section: 7,
+                title: "Settings Restored",
+                desc: "Our saved user custom settings have been restored.",
+                image: "7.Settings/SettingsModalRecalled_sm.png",
+                x: 49,
+                y: 50.1
+            },
+            {
+                id: 207,
+                section: 7,
+                title: "Clear Preset Settings",
+                desc: "To clear one of our memory preset buttons, long-press on the button.",
+                image: "7.Settings/SettingsModalRecalled_sm.png",
+                x: 47,
+                y: 17
+            },
+            {
+                id: 208,
+                section: 7,
+                title: "Clear or Replace Settings",
+                desc: "When the red trashcan is highlighted, we can press 'Yes' to clear the memory preset, or we can press the green circular arrows and instead replace the contents of the preset with our current custom settings.",
+                image: "7.Settings/SettingsModalClear_sm.png",
+                x: 56.2,
+                y: 56.6
+            },
+            {
+                id: 209,
+                section: 7,
+                title: "Preset Cleared",
+                desc: "Our user custom settings haven't changed, but the memory preset has been cleared.",
+                image: "7.Settings/SettingsModalCleared_sm.png",
+                x: 50,
+                y: 38.9
+            },
+            {
+                id: 210,
+                section: 7,
+                title: "Save to Empty Preset",
+                desc: "We can also save our user custom settings to an empty memory preset by long-pressing the preset button.",
+                image: "7.Settings/SettingsModal2_sm.png",
+                x: 47,
+                y: 17
+            },
+            {
+                id: 211,
+                section: 7,
+                title: "Save Settings",
+                desc: "This will open the same 'Save Settings' window as before.",
+                image: "7.Settings/SettingsModalSave2_sm.png",
+                x: 50,
+                y: 37.5
+            },
+            {
+                id: 212,
+                section: 7,
+                title: "Recall Settings",
+                desc: "By saving various configurations of our user custom settings in the memory presets, we can easily recall and restore different settings in the throttle to use in different situations, or on different devices.",
+                image: "7.Settings/SettingsModalRecall1_sm.png",
+                x: 29.4,
+                y: 19.6
+            },
+            {
+                id: 213,
+                section: 7,
+                title: "Export Configuration",
+                desc: "All the memory presets for our user custom settings are saved when we export our configuration file using the 'Export Config' button in the Edit Presets controls in the Loco Address Panel.",
+                image: "7.Settings/SettingsExportConfig_sm.png",
+                x: 23.9,
+                y: 29.8
+            },
+            {
+                id: 214,
+                section: 7,
+                title: "Tour Completed!",
+                desc: "We have now reached the end of the interactive guided tour of the Driver-D Throttle for DCC-EX. Happy railroading from Driver-D and Scratchy-C! All aboard!",
+                image: "7.Settings/SettingsDone_sm.png",
+                x: 50,
+                y: 9.5
+            }
+        ];
+
+        const TOUR_STOPS = {
+            1: [
+                { name: "Intro Basics", key: "intro-basics", range: [1, 6] }
+            ],
+            2: [
+                { name: "Header Basics", key: "header-basics", range: [7, 27] }
+            ],
+            3: [
+                { name: "Track Power Basics", key: "track-power-basics", range: [28, 37] }
+            ],
+            4: [
+                { name: "Address Basics", key: "basics", range: [38, 51] },
+                { name: "Configure Presets", key: "presets", range: [52, 69] },
+                { name: "Manage Roster", key: "manage-import", range: [70, 88] },
+                { name: "Locomotive Consists", key: "consists", range: [89, 112] },
+                { name: "Small Screens", key: "small-screen", range: [113, 122] }
+            ],
+            5: [
+                { name: "Throttle Basics", key: "throttle-basics", range: [123, 136] },
+                { name: "Custom Settings", key: "custom-settings", range: [137, 149] },
+                { name: "Layout Controls", key: "layout-controls", range: [150, 155] },
+                { name: "Vertical Layout", key: "vertical-layout", range: [156, 160] }
+            ],
+            6: [
+                { name: "Functions Basics", key: "functions-basics", range: [161, 166] },
+                { name: "Configure Functions", key: "configure-functions", range: [167, 172] },
+                { name: "Display Options", key: "display-options", range: [173, 178] },
+                { name: "Function Groups", key: "function-groups", range: [179, 190] },
+                { name: "Turnouts & Routes", key: "turnouts-routes", range: [191, 197] }
+            ],
+            7: [
+                { name: "User Settings Basics", key: "user-settings-basics", range: [198, 203] },
+                { name: "Memory Presets", key: "memory-presets", range: [204, 212] },
+                { name: "Export Configuration", key: "export-configuration", range: [213, 214] }
+            ]
+        };
+
+        let activeSection = 1;
+        let activeTourStopKey = "intro-basics";
+        let activeStepId = 1;
+        let builderMode = false;
+        let draggingMarker = null;
+
+        // Selection variables
+        const stepsScroller = document.getElementById('steps-scroller');
+        const activeStepBadge = document.getElementById('active-step-badge');
+        const activeStepTitle = document.getElementById('active-step-title');
+        const activeStepDesc = document.getElementById('active-step-desc');
+        const prevBtn = document.getElementById('prev-btn');
+        const nextBtn = document.getElementById('next-btn');
+        const screenshotImg = document.getElementById('screenshot-img');
+        const hotspotOverlay = document.getElementById('hotspot-overlay');
+        const progressText = document.getElementById('progress-text');
+        const progressFill = document.getElementById('progress-bar-fill');
+        const pctText = document.getElementById('pct-progress');
+        const tunerWidget = document.getElementById('tuner-widget');
+        const activeDragCoords = document.getElementById('active-drag-coords');
+        const builderBtn = document.getElementById('builder-btn');
+        const builderBtnLabel = document.getElementById('builder-btn-label');
+
+        // Font Size Configuration for Active Step Description
+        const FONT_SIZES = ['text-xs', 'text-sm', 'text-base', 'text-lg', 'text-xl', 'text-2xl', 'text-3xl'];
+        let currentSizeIndex = 4; // default to text-xl (index 4)
+
+        function decreaseTextSize() {
+            if (currentSizeIndex > 0) {
+                activeStepDesc.classList.remove(FONT_SIZES[currentSizeIndex]);
+                currentSizeIndex--;
+                activeStepDesc.classList.add(FONT_SIZES[currentSizeIndex]);
+                saveTextSize();
+            }
+        }
+
+        function increaseTextSize() {
+            if (currentSizeIndex < FONT_SIZES.length - 1) {
+                activeStepDesc.classList.remove(FONT_SIZES[currentSizeIndex]);
+                currentSizeIndex++;
+                activeStepDesc.classList.add(FONT_SIZES[currentSizeIndex]);
+                saveTextSize();
+            }
+        }
+
+        function saveTextSize() {
+            localStorage.setItem('driver_d_font_size_idx', currentSizeIndex);
+        }
+
+        function loadTextSize() {
+            const saved = localStorage.getItem('driver_d_font_size_idx');
+            if (saved !== null) {
+                const idx = parseInt(saved, 10);
+                if (idx >= 0 && idx < FONT_SIZES.length) {
+                    activeStepDesc.classList.remove(FONT_SIZES[currentSizeIndex]);
+                    currentSizeIndex = idx;
+                    activeStepDesc.classList.add(FONT_SIZES[currentSizeIndex]);
+                }
+            }
+        }
+
+        // Adjust image scale dynamically up to 200%, maintaining aspect ratio
+        function adjustImageScale() {
+            const container = document.getElementById('screenshot-container');
+            if (!container || !screenshotImg) return;
+            
+            const padX = window.innerWidth >= 1024 ? 64 : 32;
+            const padY = window.innerWidth >= 1024 ? 64 : 32;
+            
+            const availWidth = container.clientWidth - padX;
+            const availHeight = container.clientHeight - padY;
+            
+            const maxW = Math.max(100, availWidth);
+            const maxH = Math.max(100, availHeight);
+            
+            const imgW = screenshotImg.naturalWidth;
+            const imgH = screenshotImg.naturalHeight;
+            
+            if (!imgW || !imgH) return;
+            
+            const scaleX = maxW / imgW;
+            const scaleY = maxH / imgH;
+            
+            let scale = Math.min(scaleX, scaleY);
+            
+            // Limit scale to a maximum of 200% (2.0x)
+            if (scale > 2.0) {
+                scale = 2.0;
+            }
+            
+            const finalW = Math.round(imgW * scale);
+            const finalH = Math.round(imgH * scale);
+            
+            const guideBoard = document.getElementById('guide-board');
+            if (guideBoard) {
+                guideBoard.style.width = `${finalW}px`;
+                guideBoard.style.height = `${finalH}px`;
+            }
+        }
+
+        // Render Tour Stops Header Row in Left Frame
+        function renderTourStops() {
+            const container = document.getElementById('tour-stops-container');
+            if (!container) return;
+
+            const stops = TOUR_STOPS[activeSection] || [];
+            container.innerHTML = '';
+            
+            if (stops.length > 1) {
+                container.classList.remove('hidden');
+                stops.forEach(stop => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => {
+                        activeTourStopKey = stop.key;
+                        setActiveStep(stop.range[0]);
+                        renderTourStops();
+                        renderStepsList();
+                    };
+                    
+                    const isActive = stop.key === activeTourStopKey;
+                    btn.className = `flex-1 min-w-[60px] min-h-[40px] py-1.5 flex items-center justify-center px-2 text-xs font-semibold rounded-lg transition-all duration-205 cursor-pointer text-center whitespace-normal break-words leading-tight ${
+                        isActive
+                        ? 'bg-sky-500 text-white shadow-md shadow-sky-500/20 font-bold'
+                        : 'bg-slate-900 border border-slate-800 text-slate-400 hover:text-slate-200 hover:border-slate-700'
+                    }`;
+                    
+                    btn.innerText = stop.name;
+                    container.appendChild(btn);
+                });
+            } else {
+                container.classList.add('hidden');
+            }
+        }
+
+        // Embedded Compact Header Constants & Helper Functions
+        const SECTION_NAMES = {
+            1: "1. Intro & Welcome",
+            2: "2. Header Panel",
+            3: "3. Track Power Panel",
+            4: "4. Loco Address Panel",
+            5: "5. Throttle Control Panel",
+            6: "6. Loco Functions Panel",
+            7: "7. Custom Settings"
+        };
+
+        function updateCompactSectionUI() {
+            const compactTitle = document.getElementById('compact-section-title');
+            const prevBtnSec = document.getElementById('section-prev-btn');
+            const nextBtnSec = document.getElementById('section-next-btn');
+            
+            if (compactTitle) {
+                compactTitle.innerText = SECTION_NAMES[activeSection] || `Section ${activeSection}`;
+            }
+            if (prevBtnSec) {
+                prevBtnSec.disabled = activeSection <= 1;
+            }
+            if (nextBtnSec) {
+                nextBtnSec.disabled = activeSection >= 7;
+            }
+        }
+
+        function prevSection() {
+            if (activeSection > 1) {
+                switchSection(activeSection - 1);
+            }
+        }
+
+        function nextSection() {
+            if (activeSection < 7) {
+                switchSection(activeSection + 1);
+            }
+        }
+
+        function syncStateToParent() {
+            if (window.self !== window.top) {
+                const totalSteps = TOUR_DATA.length;
+                const currentIndex = TOUR_DATA.findIndex(s => s.id === activeStepId);
+                const pageText = `Page ${currentIndex + 1} of ${totalSteps}`;
+                const isDevEnv = window.location.hostname.endsWith('.run.app') || window.location.hostname.includes('.google.com') || window.location.hostname.includes('aistudio') || window.location.hostname.includes('localhost');
+
+                window.parent.postMessage({
+                    type: 'userguide-state-update',
+                    activeSection: activeSection,
+                    activeSectionName: SECTION_NAMES[activeSection] || `Section ${activeSection}`,
+                    pageText: pageText,
+                    builderMode: builderMode,
+                    activeStepId: activeStepId,
+                    isDevEnv: isDevEnv
+                }, '*');
+            }
+        }
+
+        function handleBackToThrottle() {
+            // Attempt to close the current tab or iOS PWA window overlay.
+            // If the userguide is in a separate overlay, closing the window will return the user
+            // directly to the still-running active throttle app without initiating a reload.
+            window.close();
+            
+            // If window.close() is not allowed (e.g. if the userguide replaces the page in-place),
+            // we fall back to history.back() after a brief delay.
+            setTimeout(() => {
+                window.history.back();
+            }, 150);
+        }
+
+        window.addEventListener('message', function(event) {
+            if (event.data && event.data.type === 'userguide-command') {
+                const command = event.data.command;
+                if (command === 'prev-section') {
+                    prevSection();
+                } else if (command === 'next-section') {
+                    nextSection();
+                } else if (command === 'toggle-tuner') {
+                    toggleBuilder();
+                }
+            }
+        });
+
+        let sidebarCollapsed = false;
+        function toggleSidebar() {
+            sidebarCollapsed = !sidebarCollapsed;
+            if (sidebarCollapsed) {
+                document.body.classList.add('sidebar-collapsed');
+                const btn = document.getElementById('sidebar-toggle-btn');
+                if (btn) {
+                    btn.title = "Show Sidebar Panel";
+                    btn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2" />
+                            <path d="M9 3v18" />
+                            <path d="m13 9 3 3-3 3" />
+                        </svg>
+                    `;
+                }
+            } else {
+                document.body.classList.remove('sidebar-collapsed');
+                const btn = document.getElementById('sidebar-toggle-btn');
+                if (btn) {
+                    btn.title = "Hide Sidebar Panel";
+                    btn.innerHTML = `
+                        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                            <rect width="18" height="18" x="3" y="3" rx="2" />
+                            <path d="M9 3v18" />
+                            <path d="m16 15-3-3 3-3" />
+                        </svg>
+                    `;
+                }
+            }
+            
+            // Trigger a resize to adjust visual canvas ratios and scale
+            setTimeout(() => {
+                window.dispatchEvent(new Event('resize'));
+                if (typeof adjustImageScale === 'function') {
+                    adjustImageScale();
+                }
+            }, 100);
+        }
+
+        // Initialize App
+        function init() {
+            renderTourStops();
+            renderStepsList();
+            
+            // Determine starting page/step from URL query parameter if specified
+            let startStep = 1;
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const stepParam = urlParams.get('step');
+                if (stepParam) {
+                    const parsed = parseInt(stepParam, 10);
+                    if (!isNaN(parsed) && parsed >= 1 && parsed <= TOUR_DATA.length) {
+                        startStep = parsed;
+                    }
+                }
+            } catch (e) {
+                console.error("Failed to parse URL query step parameter:", e);
+            }
+
+            // Hide Tuner mode if not in the cloud development/shared environment
+            const isDevEnv = window.location.hostname.endsWith('.run.app') || window.location.hostname.includes('.google.com') || window.location.hostname.includes('aistudio');
+            if (!isDevEnv) {
+                const btn = document.getElementById('builder-btn');
+                if (btn) {
+                    btn.style.display = 'none';
+                }
+            }
+
+            // Handle 'Back to Throttle' button visibility for iOS opened in a new tab
+            try {
+                const urlParams = new URLSearchParams(window.location.search);
+                const testIos = urlParams.get('test_ios') === 'true';
+                const isIOS = testIos || /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                              (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1) ||
+                              (/iPad|iPhone|iPod/.test(navigator.platform));
+                const isNewTab = window.self === window.top;
+                
+                if (isIOS && isNewTab) {
+                    const backBtn = document.getElementById('back-to-throttle-btn');
+                    if (backBtn) {
+                        backBtn.style.setProperty('display', 'flex', 'important');
+                    }
+                }
+            } catch (e) {
+                console.error("Error in iOS Back to Throttle detection:", e);
+            }
+
+            setActiveStep(startStep);
+            updateCompactSectionUI();
+            loadTextSize();
+            setupGlobalEvents();
+            adjustImageScale();
+            loadGuideImages();
+        }
+
+        // Switch Tour Section
+        function switchSection(secNum) {
+            activeSection = secNum;
+            
+            // Adjust tabs active visual state dynamically
+            const tab1 = document.getElementById('sec-tab-1');
+            const tab2 = document.getElementById('sec-tab-2');
+            const tab3 = document.getElementById('sec-tab-3');
+            const tab4 = document.getElementById('sec-tab-4');
+            const tab5 = document.getElementById('sec-tab-5');
+            const tab6 = document.getElementById('sec-tab-6');
+            const tab7 = document.getElementById('sec-tab-7');
+
+            const tabs = [
+                { tab: tab1, num: 1 },
+                { tab: tab2, num: 2 },
+                { tab: tab3, num: 3 },
+                { tab: tab4, num: 4 },
+                { tab: tab5, num: 5 },
+                { tab: tab6, num: 6 },
+                { tab: tab7, num: 7 }
+            ];
+
+            tabs.forEach(t => {
+                if (t.tab) {
+                    if (t.num === secNum) {
+                        t.tab.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/10";
+                    } else {
+                        t.tab.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200";
+                    }
+                }
+            });
+
+            // Auto-select first stop of this section
+            const stops = TOUR_STOPS[secNum] || [];
+            if (stops.length > 0) {
+                activeTourStopKey = stops[0].key;
+                setActiveStep(stops[0].range[0]);
+            }
+            
+            renderTourStops();
+            renderStepsList();
+            updateCompactSectionUI();
+        }
+
+        // Render Sidebar Menu Cards
+        function renderStepsList() {
+            stepsScroller.innerHTML = '';
+            
+            const stops = TOUR_STOPS[activeSection] || [];
+            const activeStop = stops.find(s => s.key === activeTourStopKey);
+            const range = activeStop ? activeStop.range : [0, 0];
+            
+            const filteredSteps = TOUR_DATA.filter(s => s.id >= range[0] && s.id <= range[1]);
+            
+            filteredSteps.forEach(step => {
+                const card = document.createElement('div');
+                card.id = `step-card-${step.id}`;
+                card.onclick = () => setActiveStep(step.id);
+                
+                card.className = `px-4 py-3 rounded-xl border transition-all duration-300 cursor-pointer flex items-center justify-between gap-4 ${
+                    step.id === activeStepId 
+                    ? 'bg-sky-500/10 border-sky-500 shadow-md shadow-sky-500/5 text-white' 
+                    : 'bg-slate-900/60 border-slate-800 text-slate-400 hover:bg-slate-900 hover:border-slate-700 hover:text-slate-200'
+                }`;
+
+                card.innerHTML = `
+                    <div class="flex-1 min-w-0">
+                        <span class="text-xs font-mono font-bold tracking-wider block mb-1 ${step.id === activeStepId ? 'text-sky-400' : 'text-slate-500'}">PAGE ${step.id}</span>
+                        <h3 class="text-sm font-bold leading-snug truncate ${step.id === activeStepId ? 'text-white' : 'text-slate-330'}">${step.title}</h3>
+                    </div>
+                    <div class="w-20 h-13 rounded-lg overflow-hidden border border-slate-800 bg-slate-950 flex-shrink-0 flex items-center justify-center p-0.5">
+                        <img src="${step.image}" alt="${step.title}" class="h-full w-full object-contain">
+                    </div>
+                `;
+                
+                stepsScroller.appendChild(card);
+            });
+        }
+
+        // Set Current Active Step
+        function setActiveStep(stepId) {
+            const step = TOUR_DATA.find(s => s.id === stepId);
+            if (!step) return;
+
+            // Sync Section Tabs & Tour Stops if jumped via next/prev or click
+            let foundSection = null;
+            let foundStopKey = null;
+
+            for (const secKey in TOUR_STOPS) {
+                const stops = TOUR_STOPS[secKey];
+                stops.forEach(stop => {
+                    if (stepId >= stop.range[0] && stepId <= stop.range[1]) {
+                        foundSection = parseInt(secKey, 10);
+                        foundStopKey = stop.key;
+                    }
+                });
+            }
+
+            if (foundSection !== null) {
+                let needsReRenderStops = false;
+                if (foundSection !== activeSection) {
+                    activeSection = foundSection;
+                    needsReRenderStops = true;
+                    
+                    // Highlight correct section tab button dynamically
+                    const tab1 = document.getElementById('sec-tab-1');
+                    const tab2 = document.getElementById('sec-tab-2');
+                    const tab3 = document.getElementById('sec-tab-3');
+                    const tab4 = document.getElementById('sec-tab-4');
+                    const tab5 = document.getElementById('sec-tab-5');
+                    const tab6 = document.getElementById('sec-tab-6');
+                    const tab7 = document.getElementById('sec-tab-7');
+                    const tabs = [
+                        { tab: tab1, num: 1 },
+                        { tab: tab2, num: 2 },
+                        { tab: tab3, num: 3 },
+                        { tab: tab4, num: 4 },
+                        { tab: tab5, num: 5 },
+                        { tab: tab6, num: 6 },
+                        { tab: tab7, num: 7 }
+                    ];
+
+                    tabs.forEach(t => {
+                        if (t.tab) {
+                            if (t.num === activeSection) {
+                                t.tab.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 bg-sky-500 text-white shadow-md shadow-sky-500/10";
+                            } else {
+                                t.tab.className = "px-4 py-2 text-xs font-semibold rounded-lg transition-all duration-300 text-slate-400 hover:text-slate-200";
+                            }
+                        }
+                    });
+                }
+                
+                if (foundStopKey !== activeTourStopKey) {
+                    activeTourStopKey = foundStopKey;
+                    needsReRenderStops = true;
+                }
+
+                if (needsReRenderStops) {
+                    renderTourStops();
+                    renderStepsList();
+                }
+                updateCompactSectionUI();
+            }
+
+            activeStepId = stepId;
+
+            // Inform main app parent window about current active step if embedded
+            if (window.self !== window.top) {
+                window.parent.postMessage({ type: 'userguide-active-step', stepId: stepId }, '*');
+            }
+
+            if (builderMode) {
+                syncTunerImageUI(step.image);
+                updateCoordsLabel(step.x, step.y);
+            }
+
+            // Update details UI
+            activeStepBadge.innerText = `Page ${step.id}`;
+            activeStepTitle.innerText = step.title;
+            activeStepDesc.innerText = step.desc;
+
+            // Handle prev/next button disability states
+            const currentIndex = TOUR_DATA.findIndex(s => s.id === stepId);
+            prevBtn.disabled = currentIndex === 0;
+            nextBtn.disabled = currentIndex === TOUR_DATA.length - 1;
+            
+            prevBtn.className = currentIndex === 0 
+                ? "flex-1 py-1.5 text-center text-xs font-medium bg-slate-900 text-slate-650 border border-slate-950 rounded-lg cursor-not-allowed"
+                : "flex-1 py-1.5 text-center text-xs font-medium border border-slate-400 hover:border-white bg-slate-900 hover:bg-slate-850 text-white rounded-lg transition-all cursor-pointer";
+                
+            nextBtn.className = currentIndex === TOUR_DATA.length - 1
+                ? "flex-1 py-1.5 text-center text-xs font-medium bg-slate-900 text-slate-650 border border-slate-950 rounded-lg cursor-not-allowed"
+                : "flex-1 py-1.5 text-center text-xs font-medium bg-sky-600 hover:bg-sky-500 border border-slate-400 hover:border-white text-white rounded-lg font-semibold transition-all cursor-pointer";
+
+            // Update active state class on cards
+            TOUR_DATA.forEach(s => {
+                const card = document.getElementById(`step-card-${s.id}`);
+                if (card) {
+                    const tag = card.querySelector('span');
+                    const h3 = card.querySelector('h3');
+                    if (s.id === stepId) {
+                        card.className = "px-4 py-3 rounded-xl border bg-sky-500/10 border-sky-500 shadow-md shadow-sky-500/5 text-white flex items-center justify-between gap-4";
+                        if (tag) tag.className = "text-xs font-mono font-bold tracking-wider text-sky-400 block mb-1";
+                        if (h3) h3.className = "text-sm font-bold leading-snug truncate text-white";
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    } else {
+                        card.className = "px-4 py-3 rounded-xl border bg-slate-900/60 border-slate-800 text-slate-400 hover:bg-slate-900 hover:border-slate-700 hover:text-slate-200 flex items-center justify-between gap-4";
+                        if (tag) tag.className = "text-xs font-mono font-bold tracking-wider text-slate-500 block mb-1";
+                        if (h3) h3.className = "text-sm font-bold leading-snug truncate text-slate-300";
+                    }
+                }
+            });
+
+            // Update Progress Tracker
+            const totalSteps = TOUR_DATA.length;
+            const progressPct = Math.round((currentIndex / (totalSteps - 1)) * 100);
+            progressText.innerText = `Page ${currentIndex + 1} of ${totalSteps}`;
+            progressFill.style.width = `${progressPct}%`;
+            pctText.innerText = `${progressPct}% Complete`;
+
+            // Swap Image with transitions
+            if (screenshotImg.getAttribute('src') !== step.image) {
+                screenshotImg.style.opacity = 0;
+                setTimeout(() => {
+                    screenshotImg.setAttribute('src', step.image);
+                    screenshotImg.style.opacity = 1;
+                    // re-draw overlay markers
+                    renderHotspots();
+                }, 150);
+            } else {
+                renderHotspots();
+            }
+
+            // Sync state to parent modal
+            if (typeof syncStateToParent === 'function') {
+                syncStateToParent();
+            }
+        }
+
+        // Draw Interactive Markers on Screenshot Overlay
+        function renderHotspots() {
+            hotspotOverlay.innerHTML = '';
+            
+            const currentStep = TOUR_DATA.find(s => s.id === activeStepId);
+            
+            // Only render hotspots that share the active screenshot
+            const visibleSteps = TOUR_DATA.filter(s => s.image === currentStep.image);
+
+            visibleSteps.forEach(step => {
+                const marker = document.createElement('div');
+                marker.id = `hotspot-${step.id}`;
+                
+                const isActive = step.id === activeStepId;
+                
+                // Absolute placement in percentage
+                marker.style.left = `${step.x}%`;
+                marker.style.top = `${step.y}%`;
+                marker.style.transform = 'translate(-50%, -50%)';
+                
+                marker.className = `absolute h-8 w-8 rounded-full flex items-center justify-center font-mono font-bold text-xs select-none transition-all duration-300 cursor-pointer shadow-lg z-10 ${
+                    isActive 
+                    ? 'bg-sky-500 text-white border-2 border-white ring-4 ring-sky-500/40 pulse scale-110 z-20' 
+                    : 'bg-white text-sky-600 hover:text-white hover:bg-sky-500 border border-sky-800'
+                } ${builderMode ? 'cursor-grab active:cursor-grabbing' : ''}`;
+                
+                marker.innerHTML = step.id;
+                
+                // Hover triggers brief tooltip showing title
+                marker.title = `Page ${step.id}: ${step.title}`;
+                
+                // Select step on click, but ignore if dragging
+                marker.addEventListener('click', (e) => {
+                    if (builderMode) return;
+                    setActiveStep(step.id);
+                });
+
+                // Add Drag support for builder tuning
+                if (builderMode) {
+                    marker.addEventListener('mousedown', (e) => startDrag(e, step));
+                    marker.addEventListener('touchstart', (e) => startDrag(e, step), { passive: true });
+                }
+
+                hotspotOverlay.appendChild(marker);
+            });
+        }
+
+        // Prev/Next Navigation
+        function nextStep() {
+            const index = TOUR_DATA.findIndex(s => s.id === activeStepId);
+            if (index !== -1 && index < TOUR_DATA.length - 1) {
+                setActiveStep(TOUR_DATA[index + 1].id);
+            }
+        }
+
+        function prevStep() {
+            const index = TOUR_DATA.findIndex(s => s.id === activeStepId);
+            if (index > 0) {
+                setActiveStep(TOUR_DATA[index - 1].id);
+            }
+        }
+
+        // Global Event Listeners (keys, window size handles)
+        function setupGlobalEvents() {
+            window.addEventListener('resize', adjustImageScale);
+            screenshotImg.addEventListener('load', adjustImageScale);
+
+            document.addEventListener('keydown', (e) => {
+                // Left Arrow -> Previous
+                if (e.key === 'ArrowLeft') {
+                    prevStep();
+                }
+                // Right Arrow -> Next
+                else if (e.key === 'ArrowRight') {
+                    nextStep();
+                }
+            });
+
+            // Handle Double click on board in builder mode to place marker
+            hotspotOverlay.addEventListener('dblclick', (e) => {
+                if (!builderMode) return;
+                const rect = hotspotOverlay.getBoundingClientRect();
+                const xPct = parseFloat(((e.clientX - rect.left) / rect.width * 100).toFixed(1));
+                const yPct = parseFloat(((e.clientY - rect.top) / rect.height * 100).toFixed(1));
+                
+                const step = TOUR_DATA.find(s => s.id === activeStepId);
+                if (step) {
+                    step.x = xPct;
+                    step.y = yPct;
+                    renderHotspots();
+                    updateCoordsLabel(xPct, yPct);
+                }
+            });
+        }
+
+        // Builder / Tutor mode toggle
+        function toggleBuilder() {
+            const isDevEnv = window.location.hostname.endsWith('.run.app') || window.location.hostname.includes('.google.com') || window.location.hostname.includes('aistudio');
+            if (!isDevEnv) {
+                alert("Tuner Mode is only available in the development sandbox environment.");
+                return;
+            }
+            builderMode = !builderMode;
+            if (builderMode) {
+                tunerWidget.classList.remove('hidden');
+                builderBtn.className = "flex items-center gap-2 px-3 py-1.5 text-xs font-semibold border border-sky-500 rounded-lg bg-sky-500/10 text-sky-400 transition-all scale-102";
+                builderBtnLabel.innerText = "Tuner Mode ON";
+                loadGuideImages(); // Fetch fresh images dynamically when opening Tuner Mode
+                // Show current coords if active
+                const step = TOUR_DATA.find(s => s.id === activeStepId);
+                updateCoordsLabel(step.x, step.y);
+                syncTunerImageUI(step.image);
+            } else {
+                tunerWidget.classList.add('hidden');
+                builderBtn.className = "flex items-center gap-2 px-3 py-1.5 text-xs font-semibold border border-dashed border-slate-700 hover:border-sky-500 rounded-lg hover:bg-sky-500/5 transition-all";
+                builderBtnLabel.innerText = "Tuner Mode Off";
+            }
+            renderHotspots();
+
+            // Sync state to parent modal
+            if (typeof syncStateToParent === 'function') {
+                syncStateToParent();
+            }
+        }
+
+        // Dragging Lifecycle Handlers
+        function startDrag(e, step) {
+            e.stopPropagation();
+            draggingMarker = step;
+            
+            document.addEventListener('mousemove', onDrag);
+            document.addEventListener('mouseup', endDrag);
+            document.addEventListener('touchmove', onDrag, { passive: false });
+            document.addEventListener('touchend', endDrag);
+        }
+
+        function onDrag(e) {
+            if (!draggingMarker) return;
+            
+            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
+            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            
+            const rect = hotspotOverlay.getBoundingClientRect();
+            let xPct = ((clientX - rect.left) / rect.width) * 100;
+            let yPct = ((clientY - rect.top) / rect.height) * 100;
+            
+            // Constrain 0-100% bounds
+            xPct = Math.max(0, Math.min(100, xPct));
+            yPct = Math.max(0, Math.min(100, yPct));
+            
+            xPct = parseFloat(xPct.toFixed(1));
+            yPct = parseFloat(yPct.toFixed(1));
+            
+            draggingMarker.x = xPct;
+            draggingMarker.y = yPct;
+            
+            // Re-render marker position immediately for smooth scrolling
+            const elem = document.getElementById(`hotspot-${draggingMarker.id}`);
+            if (elem) {
+                elem.style.left = `${xPct}%`;
+                elem.style.top = `${yPct}%`;
+            }
+            
+            updateCoordsLabel(xPct, yPct);
+        }
+
+        function endDrag() {
+            draggingMarker = null;
+            document.removeEventListener('mousemove', onDrag);
+            document.removeEventListener('mouseup', endDrag);
+            document.removeEventListener('touchmove', onDrag);
+            document.removeEventListener('touchend', endDrag);
+            renderHotspots();
+        }
+
+        function updateCoordsLabel(x, y) {
+            activeDragCoords.innerText = `X: ${x}% | Y: ${y}%`;
+        }
+
+        // Dynamic Image Discovery & Selection Config
+        let availableImages = [
+            "1.Intro/Welcome_sm.png",
+            "2.Header/Header_sm.png",
+            "2.Header/Serial_sm.png",
+            "2.Header/Wifi_sm.png",
+            "2.Header/SerialMonitor_sm.png",
+            "2.Header/AppIcon_sm.png",
+            "2.Header/DisplaySettings_sm.png"
+        ];
+
+        async function loadGuideImages() {
+            try {
+                const response = await fetch('/api/guide-images');
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data && Array.isArray(data.images)) {
+                        availableImages = data.images;
+                        rebuildTunerImageSelect();
+                    }
+                }
+            } catch (err) {
+                console.error("Failed to load guide images", err);
+            }
+        }
+
+        function rebuildTunerImageSelect() {
+            const selectEl = document.getElementById('tuner-img-select');
+            if (!selectEl) return;
+            
+            // Rebuild selection options
+            selectEl.innerHTML = '';
+            availableImages.forEach(img => {
+                const opt = document.createElement('option');
+                opt.value = img;
+                opt.innerText = img;
+                selectEl.appendChild(opt);
+            });
+
+            // Re-append custom option
+            const customOpt = document.createElement('option');
+            customOpt.value = "custom";
+            customOpt.innerText = "Custom...";
+            selectEl.appendChild(customOpt);
+
+            // Resync current active image
+            const step = TOUR_DATA.find(s => s.id === activeStepId);
+            if (step) {
+                syncTunerImageUI(step.image);
+            }
+        }
+
+        // Image Tuning Synchronization and Event Handlers
+        function syncTunerImageUI(imagePath) {
+            const selectEl = document.getElementById('tuner-img-select');
+            const customEl = document.getElementById('tuner-img-custom');
+            if (!selectEl || !customEl) return;
+
+            if (availableImages.includes(imagePath)) {
+                selectEl.value = imagePath;
+                customEl.classList.add('hidden');
+            } else {
+                selectEl.value = "custom";
+                customEl.value = imagePath;
+                customEl.classList.remove('hidden');
+            }
+        }
+
+        function onTunerImageSelectChange(val) {
+            const customEl = document.getElementById('tuner-img-custom');
+            const step = TOUR_DATA.find(s => s.id === activeStepId);
+            if (!step) return;
+
+            if (val === "custom") {
+                customEl.classList.remove('hidden');
+                customEl.value = step.image;
+            } else {
+                customEl.classList.add('hidden');
+                step.image = val;
+                updateImageFromTuner(val);
+            }
+        }
+
+        function onTunerImageCustomInput(val) {
+            const step = TOUR_DATA.find(s => s.id === activeStepId);
+            if (!step) return;
+            step.image = val;
+            updateImageFromTuner(val);
+        }
+
+        function updateImageFromTuner(imagePath) {
+            // Update active image src
+            const currentImgPath = screenshotImg.getAttribute('src');
+            if (currentImgPath !== imagePath) {
+                screenshotImg.setAttribute('src', imagePath);
+            }
+            // Re-render the slide thumbnails in the left-hand sidebar
+            renderStepsList();
+            // Re-render hotspots for the new image (as spots are shown if they belong to this image)
+            renderHotspots();
+        }
+
+        // Copy updated Javascript Array coordinates & metadata to clipboard
+        function copyCoordinatesCode() {
+            let text = "        const TOUR_DATA = [\n";
+            let currentSection = null;
+            
+            TOUR_DATA.forEach(step => {
+                if (step.section !== currentSection) {
+                    currentSection = step.section;
+                    if (currentSection === 1) {
+                        text += "            // ========== SECTION 1: WELCOME & INTRO ==========\n";
+                    } else if (currentSection === 2) {
+                        text += "            // ========== SECTION 2: HEADER DETAILS ==========\n";
+                    }
+                }
+                text += "            {\n";
+                text += `                id: ${step.id},\n`;
+                text += `                section: ${step.section},\n`;
+                text += `                title: "${step.title.replace(/"/g, '\\"')}",\n`;
+                text += `                desc: "${step.desc.replace(/"/g, '\\"')}",\n`;
+                text += `                image: "${step.image}",\n`;
+                text += `                x: ${step.x},\n`;
+                text += `                y: ${step.y}\n`;
+                text += "            },\n";
+            });
+            
+            // Strip the trailing comma on the actual last element
+            if (text.endsWith(",\n")) {
+                text = text.slice(0, -2) + "\n";
+            }
+            text += "        ];";
+            
+            navigator.clipboard.writeText(text).then(() => {
+                activeDragCoords.innerHTML = "✨ COPIED ARRAY CODE!";
+                setTimeout(() => {
+                    const step = TOUR_DATA.find(s => s.id === activeStepId);
+                    updateCoordsLabel(step.x, step.y);
+                }, 2000);
+            }).catch(err => {
+                alert('Failed to copy. Full TOUR_DATA block is:\n' + text);
+            });
+        }
+
+        // Launch Application
+        window.addEventListener('DOMContentLoaded', init);
+    </script>
+</body>
+</html>
