@@ -20,6 +20,10 @@ Once we start vibe coding an app, we will see the chat pane on the left hand sid
 
 If we click the ‘Code’ button, a code editor will appear in place of the preview pane, and we can see all the files and code that are part of our app. This is not just a static display. We can add and delete files and folders, upload zip files, and make edits right in the code. This can come in handy as we dive into the weeds of our app.
 
+<div align="center">
+   <img width="836" height="471" alt="DDT-Throttle-Free-Tools" src="WebTechnologies_sm.png" />
+</div>
+
 Google AI Studio incorporates a number of popular open-source web tools and technologies to build its apps. 
 
    <b>Javascript & Typescript</b><br>
