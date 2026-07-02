@@ -3,10 +3,12 @@
 <h1>Tools I used to create the DriverD-Throttle for DCC-EX!</h1>
 
 <div align="center">
-   <img width="1200" height="1100" alt="DDT-Throttle-for-DCC-EX" src="DriverDThrottle_sm.png" />
+   <img width="1200" height="1100" alt="DDT-Throttle-for-DCC-EX" src="DriverDThrottle_Local_sm.png" />
 </div>
 
-All the tools I used to create the DCC-EX Throttle by @DriverD were free of charge to use. The primary tool I used was Google AI Studio, which I used for free with my Google (Gmail) account.Google AI Studio:  https://aistudio.google.com/apps
+All the tools I used to create the DCC-EX Throttle by @DriverD were free of charge to use. The primary tool I used was Google AI Studio, which I used for free with my Google (Gmail) account.
+
+Google AI Studio:  https://aistudio.google.com/apps
 
 Occasionally I used ChatGPT to get a second opinion on various technical issues, including strategies for exporting and compiling the code into an app that anyone can use.
 
