@@ -14,7 +14,7 @@ Occasionally I used ChatGPT to get a second opinion on various technical issues,
 
 Google AI Studio runs in a web browser and doesn’t require any additional software, so it’s very easy to use. For best results we will want to use Google Chrome, or another Chrome-based browser. In particular, Google Chrome can connect to our DCC-EX command station via a serial port, which is the only way to connect to DCC-EX from within AI Studio itself.
 
-After we go to the AI Studio web page, we can click the Apps button to see our prior work, or the “New App” button to start a new app.
+After we go to the AI Studio web page, we can click the Apps button to see our prior work, or the “New App” button to start a new app. Google AI Studio includes several different versions of Google’s AI models. When we create an app or select an app to work on, we can select which of Google’s AI models we want to use. When we run out of free credits on one model, we can switch to another.
 
 Once we start vibe coding an app, we will see the chat pane on the left hand side of the window, and the preview pane on the right. The preview pane allows us to run our app right in the browser. We can also place the preview pane into full screen mode.
 
