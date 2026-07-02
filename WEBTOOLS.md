@@ -20,15 +20,15 @@ Once we start vibe coding an app, we will see the chat pane on the left hand sid
 
 If we click the ‘Code’ button, a code editor will appear in place of the preview pane, and we can see all the files and code that are part of our app. This is not just a static display. We can add and delete files and folders, upload zip files, and make edits right in the code. This can come in handy as we dive into the weeds of our app.
 
-<h2>Open-source web tools and technologies!</h2>
+<h2>Open-source web tools and technologies...</h2>
 
 <div align="center">
    <img width="836" height="471" alt="DDT-Throttle-Free-Tools" src="WebTechnologies_sm.png" />
 </div>
 
 <br>
-Google AI Studio incorporates a number of popular open-source web tools and technologies to build its apps.
-
+<h3>?Google AI Studio incorporates a number of popular open-source web tools and technologies to build its apps.</h3>
+<br>
    <b>Javascript & Typescript</b><br>
 
 Because AI Studio runs in a Chrome web browser, it does its coding primarily in a combination of Javascript and Typescript, which is JavaScript’s pedantic younger cousin. I remember seeing some Javascript in web pages 30 years ago, but the only thing that’s same today is the name. Today’s Javascript is built on a massive scaffolding of libraries and support files that requires almost 9,000 lines of code just to list them all.
