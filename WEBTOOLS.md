@@ -43,7 +43,7 @@ By the way, Microsoft developed TypeScript, React comes from Facebook parent Met
 
 The last major components to mention are the tools we use to compile and run our app once we export it from AI Studio. While we can run our app within the AI Studio preview pane as much as we want, there may be some features that just don’t work in a web browser, such as making WiFi connections, and eventually we are going to want to export our code so we can run it as a standalone app, and on other devices.
 
-The first tool that we use to do this is called Node.js, which has become one of the commonly used technologies on the web. Node.js is an open-source “runtime” that uses Google’s JavaScript engine to run JavaScript code outside a web browser on various platforms, including Mac and Windows. Node is the only tool on this list we need to download and install on our computer.
+The first tool that we use to do this is called Node.js, which has become one of the most commonly used technologies on the web. Node.js is an open-source “runtime” that uses Google’s JavaScript engine to run JavaScript code outside a web browser on various platforms, including Mac and Windows. Node is the only tool on this list we need to download and install on our computer.
 
 For our purposes, we will use Node.js as a web server to display our app, which we can access from any device that can connect to our computer, including smart phones and tablets.
 
