@@ -3,7 +3,7 @@
 <h1>Tools I used to create the DriverD-Throttle for DCC-EX!</h1>
 
 <div align="center">
-   <img width="1200" height="1100" alt="DDT-Throttle-for-DCC-EX" src="DriverDThrottle_Local_sm.png" />
+   <img width="836" height="471" alt="DDT-Throttle-Free-Tools" src="FreeTools_sm.png" />
 </div>
 
 All the tools I used to create the DCC-EX Throttle by @DriverD were free of charge to use. The primary tool I used was Google AI Studio, which I used for free with my Google (Gmail) account.
@@ -60,5 +60,11 @@ DriverD & Scratchy-C [Meow!]<br>
 
    <img width="119" height="119" alt="Scratchy-C" src="Scratchy-C.png" />
 
+<div align="center">
+   <img width="1200" height="1100" alt="DDT-Throttle-for-DCC-EX" src="DriverDThrottle_Local_sm.png" />
+</div>
+
 <div align="center"><i>Created in Google AI Studio by @DriverDTrains (c) 2026.</i></center></div>
+
+
 
