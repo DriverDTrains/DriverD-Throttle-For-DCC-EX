@@ -26,7 +26,7 @@ Google AI Studio incorporates a number of popular open-source web tools and tech
 
 Because AI Studio runs in a Chrome web browser, it does its coding primarily in a combination of Javascript and Typescript, which is JavaScript’s pedantic younger cousin. I remember seeing some Javascript in web pages 30 years ago, but the only thing that’s same today is the name. Today’s Javascript is built on a massive scaffolding of libraries and support files that requires almost 9,000 lines of code just to list them all.
 
-React
+   <b>React</b><br>
 
 The primary component AI Studio uses to build its apps is the open-source React Javascript library, which is an extremely popular and widely used tool for creating applications and mobile apps that only have one page. 
 
@@ -42,7 +42,7 @@ For our purposes, we will use Node.js as a web server to display our app, which 
 
 Using a Node package manager, or npm, we can collect together all the dependencies and tools we need to run our app on our computer. However, we can only run our app this way within the node environment. Further, unless we write a script to do it for us, we need to run Node.js from the command line in the Mac Terminal or Windows Powershell, which is less convenient than simply double-clicking on an app to open it. 
 
-Electron
+   <b>Electron</b><br>
 
 Finally, while Node.js allows us to run our Javascript app outside of a web browser, we still need a web browser to actually connect to our Node.js web server, and interact with our app.
 
