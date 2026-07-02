@@ -8,7 +8,7 @@
 
 All the tools I used to create the DCC-EX Throttle by @DriverD were free of charge to use. The primary tool I used was Google AI Studio, which I used for free with my Google (Gmail) account.
 
-Google AI Studio:  https://aistudio.google.com/apps
+   <b>Google AI Studio:</b>  https://aistudio.google.com/apps
 
 Occasionally I used ChatGPT to get a second opinion on various technical issues, including strategies for exporting and compiling the code into an app that anyone can use.
 
@@ -32,7 +32,7 @@ The primary component AI Studio uses to build its apps is the open-source React 
 
 By the way, Microsoft developed TypeScript, React comes from Facebook parent Meta, and we are putting this all together in Google AI Studio, so almost everybody is riding on this train.
 
-Node.js
+   <b>Node.js</b><br>
 
 The last major components to mention are the tools we use to compile and run our app once we export it from AI Studio. While we can run our app within the AI Studio preview pane as much as we want, there may be some features that just don’t work in a web browser, such as making WiFi connections, and eventually we are going to want to export our code so we can run it as a standalone app, and on other devices.
 
