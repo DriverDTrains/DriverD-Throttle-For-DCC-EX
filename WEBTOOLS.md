@@ -27,9 +27,10 @@ If we click the ‘Code’ button, a code editor will appear in place of the pre
 </div>
 
 <br>
-<h3>?Google AI Studio incorporates a number of popular open-source web tools and technologies to build its apps.</h3>
+<h3>Google AI Studio incorporates a number of popular open-source web tools and technologies to build its apps.</h3>
 <br>
-   <b>Javascript & Typescript</b><br>
+<br>
+   <b>Javascript & Typescript</b>
 
 Because AI Studio runs in a Chrome web browser, it does its coding primarily in a combination of Javascript and Typescript, which is JavaScript’s pedantic younger cousin. I remember seeing some Javascript in web pages 30 years ago, but the only thing that’s same today is the name. Today’s Javascript is built on a massive scaffolding of libraries and support files that requires almost 9,000 lines of code just to list them all.
 
