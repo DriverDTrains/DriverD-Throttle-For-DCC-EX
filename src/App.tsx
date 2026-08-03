@@ -332,6 +332,7 @@ export default function App() {
   const writableStreamClosedRef = useRef(writableStreamClosed);
   const directWsRef = useRef(directWs);
   const isBridgeAvailableRef = useRef(isBridgeAvailable);
+  const tcpCleanupsRef = useRef<(() => void)[]>([]);
 
   useEffect(() => { portRef.current = port; }, [port]);
   useEffect(() => { isWifiConnectedRef.current = isWifiConnected; }, [isWifiConnected]);
@@ -3860,20 +3861,32 @@ export default function App() {
           const segments = fnList.split('/');
           const parsedFunctions: DccExLocoParsedFunction[] = [];
           
-          segments.forEach((seg) => {
+          segments.forEach((seg, idx) => {
             const trimmed = seg.trim();
             if (!trimmed) return;
             
-            // Format: [*]F[num] [name]
-            const fnMatch = trimmed.match(/^(\*)?F(\d+)\s+(.+)$/i);
-            if (fnMatch) {
-              const [__, star, num, name] = fnMatch;
-              parsedFunctions.push({
-                number: parseInt(num),
-                name: name.trim(),
-                isMomentary: !!star
-              });
+            let isMomentary = false;
+            let remainder = trimmed;
+            if (remainder.startsWith('*')) {
+              isMomentary = true;
+              remainder = remainder.substring(1).trim();
             }
+            
+            let num = idx;
+            let name = remainder;
+            
+            // Format: F[num] [name]
+            const fnMatch = remainder.match(/^F(\d+)\s+(.+)$/i);
+            if (fnMatch) {
+              num = parseInt(fnMatch[1]);
+              name = fnMatch[2].trim();
+            }
+            
+            parsedFunctions.push({
+              number: num,
+              name: name,
+              isMomentary: isMomentary
+            });
           });
 
           const details: DccExLocoDetails = {
@@ -4774,9 +4787,15 @@ export default function App() {
           // Use Electron TCP Bridge for standalone production build
           addLog('info', `Connecting via Electron TCP Bridge: ${wifiHost}:${wifiPort}...`);
           
+          // Clear any prior registered listeners first to avoid memory leaks/duplication
+          tcpCleanupsRef.current.forEach(cleanup => {
+            try { cleanup(); } catch (e) { console.error('Error in cleanup:', e); }
+          });
+          tcpCleanupsRef.current = [];
+
           tcpBufferRef.current = ''; // Reset buffer
 
-          electronAPI.onTcpData((data: string) => {
+          const unsubData = electronAPI.onTcpData((data: string) => {
             console.log('TCP Bridge Data Received:', data);
             tcpBufferRef.current += data;
             
@@ -4802,7 +4821,7 @@ export default function App() {
             }
           });
 
-          electronAPI.onTcpConnected(() => {
+          const unsubConnected = electronAPI.onTcpConnected(() => {
             console.log('TCP Bridge Connected');
             setIsWifiConnected(true);
             setStatusText('Connected (WiFi Bridge)');
@@ -4813,17 +4832,20 @@ export default function App() {
             setTurnoutsLoaded(false);
           });
 
-          electronAPI.onTcpError((err: string) => {
+          const unsubError = electronAPI.onTcpError((err: string) => {
             addLog('error', `TCP Bridge Error: ${err}`);
             setIsWifiConnected(false);
             setStatusText('Disconnected');
           });
 
-          electronAPI.onTcpClose(() => {
+          const unsubClose = electronAPI.onTcpClose(() => {
             addLog('info', 'TCP Bridge Disconnected');
             setIsWifiConnected(false);
             setStatusText('Disconnected');
           });
+
+          // Store cleanup unsubscribers
+          tcpCleanupsRef.current = [unsubData, unsubConnected, unsubError, unsubClose];
 
           electronAPI.tcpConnect(wifiHost, wifiPort);
           return;
@@ -4946,6 +4968,12 @@ export default function App() {
       if (electronAPI && !isBridgeAvailableRef.current) {
         electronAPI.tcpDisconnect();
       }
+
+      // Execute and clear stored TCP cleanup unsubscribers to avoid duplicated messages
+      tcpCleanupsRef.current.forEach(cleanup => {
+        try { cleanup(); } catch (e) { console.error('Error in cleanup:', e); }
+      });
+      tcpCleanupsRef.current = [];
 
       if (directWsRef.current) {
         directWsRef.current.close();
@@ -12764,7 +12792,7 @@ export default function App() {
         <footer className="text-center py-0.5">
           <p className="text-text-muted text-[10px] font-bold uppercase tracking-[0.2em] flex flex-wrap justify-center gap-x-2">
             <span className="whitespace-nowrap">DCC-EX Native Protocol Throttle</span>
-            <span className="whitespace-nowrap">©2026 by @DriverDTrains • v1.4.2</span>
+            <span className="whitespace-nowrap">©2026 by @DriverDTrains • v1.4.3</span>
           </p>
         </footer>
 
