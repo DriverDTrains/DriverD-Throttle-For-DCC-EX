@@ -1,7 +1,7 @@
 {
   "name": "DriverD-Throttle",
   "private": true,
-  "version": "1.4.20",
+  "version": "1.4.3",
   "type": "module",
   "main": "dist-electron/main.cjs",
   "scripts": {
