@@ -1,0 +1,9 @@
+Version 1.4.2
+Initial Release
+Date: June 27, 2026
+
+Version 1.4.3
+- Fixed an issue in the WiFi/TCP connection where disconnecting and reconnecting multiple times caused received messages to be printed and processed multiple times. This was resolved by registering cleanup listeners and cleanly unsubscribing from all TCP events (onTcpData, onTcpConnected, onTcpError, onTcpClose) prior to initiating a new connection and upon disconnecting.
+Date: August 2, 2026, 10:06 AM (UTC-7)
+- Fixed an issue with the roster import parser for DCC-EX. The parser now dynamically handles cases where locomotive function lists do not explicitly include function numbers (e.g., "F0", "F1", etc.), successfully mapping them sequentially as fallbacks while fully retaining support for standard DCC-EX function definitions and momentary (*) tags.
+Date: August 2, 2026, 8:10 PM (UTC-7)
