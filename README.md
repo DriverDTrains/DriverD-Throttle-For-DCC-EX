@@ -49,7 +49,7 @@ https://github.com/DriverDTrains/DriverD-Throttle-For-DCC-EX/releases <br>
 
 <h2> Learn How to Use the @Driver-D Throttle for DCC-EX! </h2>
 
-10. Watch the YouTube video @DriverDTrains #9.d.   https://www.youtube.com/@DriverDTrains
+10. Watch the YouTube videos @DriverDTrains #9.d & #9.d-2.   https://www.youtube.com/@DriverDTrains
 
 11. Open the Display Settings palette menu in the upper-right corner of the throttle window and take the built-in self-guided Interactive Tour, or open the illustrated User Guide.
 
